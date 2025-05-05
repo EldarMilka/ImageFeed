@@ -8,28 +8,15 @@
 
 /* Begin PBXFileReference section */
 		7851654E2DBFCA38004F4AAD /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		789689D12DC749CE00FAE1E1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		789689D22DC749CE00FAE1E1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		789689D32DC749CE00FAE1E1 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
+		789689D42DC749CE00FAE1E1 /* ImagesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewController.swift; sourceTree = "<group>"; };
+		789689D52DC749CE00FAE1E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		789689D62DC749CE00FAE1E1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		789689D82DC749CE00FAE1E1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		789689DA2DC749CE00FAE1E1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		785165602DBFCA3B004F4AAD /* Exceptions for "ImageFeed" folder in "ImageFeed" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 7851654D2DBFCA38004F4AAD /* ImageFeed */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		785165502DBFCA38004F4AAD /* ImageFeed */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				785165602DBFCA3B004F4AAD /* Exceptions for "ImageFeed" folder in "ImageFeed" target */,
-			);
-			path = ImageFeed;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		7851654B2DBFCA38004F4AAD /* Frameworks */ = {
@@ -45,7 +32,7 @@
 		785165452DBFCA38004F4AAD = {
 			isa = PBXGroup;
 			children = (
-				785165502DBFCA38004F4AAD /* ImageFeed */,
+				789689DB2DC749CE00FAE1E1 /* ImageFeed */,
 				7851654F2DBFCA38004F4AAD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +43,29 @@
 				7851654E2DBFCA38004F4AAD /* ImageFeed.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		789689DB2DC749CE00FAE1E1 /* ImageFeed */ = {
+			isa = PBXGroup;
+			children = (
+				789689D12DC749CE00FAE1E1 /* AppDelegate.swift */,
+				789689D22DC749CE00FAE1E1 /* Assets.xcassets */,
+				789689DC2DC749EB00FAE1E1 /* ImagesList */,
+				789689D52DC749CE00FAE1E1 /* Info.plist */,
+				789689D72DC749CE00FAE1E1 /* LaunchScreen.storyboard */,
+				789689D92DC749CE00FAE1E1 /* Main.storyboard */,
+				789689DA2DC749CE00FAE1E1 /* SceneDelegate.swift */,
+			);
+			path = ImageFeed;
+			sourceTree = "<group>";
+		};
+		789689DC2DC749EB00FAE1E1 /* ImagesList */ = {
+			isa = PBXGroup;
+			children = (
+				789689D32DC749CE00FAE1E1 /* ImagesListCell.swift */,
+				789689D42DC749CE00FAE1E1 /* ImagesListViewController.swift */,
+			);
+			path = ImagesList;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -72,9 +82,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				785165502DBFCA38004F4AAD /* ImageFeed */,
 			);
 			name = ImageFeed;
 			packageProductDependencies = (
@@ -136,6 +143,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		789689D72DC749CE00FAE1E1 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				789689D62DC749CE00FAE1E1 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		789689D92DC749CE00FAE1E1 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				789689D82DC749CE00FAE1E1 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		785165622DBFCA3B004F4AAD /* Debug */ = {
