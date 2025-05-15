@@ -21,7 +21,6 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet private var scrollView: UIScrollView!
     override func viewDidLoad() {
         super.viewDidLoad()
-     
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         guard let image else { return }
