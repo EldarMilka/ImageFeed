@@ -55,7 +55,6 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypBlack
         
-
         [avatarImageView, nameLabel, loginNameLabel, logoutButton, descriptionLabel].forEach {
             view.addSubview($0)
         }
