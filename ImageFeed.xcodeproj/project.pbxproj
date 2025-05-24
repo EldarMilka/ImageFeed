@@ -14,8 +14,11 @@
 		78875B3D2DCCDBB4007DFA63 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 78875B2A2DCCDBB4007DFA63 /* Assets.xcassets */; };
 		78895E1C2DD1B2EF00DB3ADC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78895E1B2DD1B2EF00DB3ADC /* AppDelegate.swift */; };
 		78895E1E2DD1B2F600DB3ADC /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78895E1D2DD1B2F600DB3ADC /* ProfileViewController.swift */; };
+		789671722DDC3C1C00B18A02 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789671712DDC3C1C00B18A02 /* AuthViewController.swift */; };
+		789671742DDC3D1E00B18A02 /* WebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789671732DDC3D1E00B18A02 /* WebViewViewController.swift */; };
 		78B8E35B2DCCECEF0069E85D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78875B2E2DCCDBB4007DFA63 /* Main.storyboard */; };
 		78B950512DCCDC1300516E77 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78875B2C2DCCDBB4007DFA63 /* LaunchScreen.storyboard */; };
+		78BAD3722DD6FF16005C7CF5 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BAD3712DD6FF16005C7CF5 /* Constant.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +32,10 @@
 		78875B362DCCDBB4007DFA63 /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
 		78895E1B2DD1B2EF00DB3ADC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		78895E1D2DD1B2F600DB3ADC /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		789671712DDC3C1C00B18A02 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
+		789671732DDC3D1E00B18A02 /* WebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewController.swift; sourceTree = "<group>"; };
 		78B8E35A2DCCE5B10069E85D /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		78BAD3712DD6FF16005C7CF5 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +61,7 @@
 				78B8E35A2DCCE5B10069E85D /* ImageFeed.app */,
 				78895E1B2DD1B2EF00DB3ADC /* AppDelegate.swift */,
 				78895E1D2DD1B2F600DB3ADC /* ProfileViewController.swift */,
+				789671702DDC3BFC00B18A02 /* Auth */,
 			);
 			sourceTree = "<group>";
 		};
@@ -72,8 +79,18 @@
 			children = (
 				78875B302DCCDBB4007DFA63 /* ImagesListCell.swift */,
 				78875B312DCCDBB4007DFA63 /* ImagesListViewController.swift */,
+				78BAD3712DD6FF16005C7CF5 /* Constant.swift */,
 			);
 			path = ImagesList;
+			sourceTree = "<group>";
+		};
+		789671702DDC3BFC00B18A02 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				789671712DDC3C1C00B18A02 /* AuthViewController.swift */,
+				789671732DDC3D1E00B18A02 /* WebViewViewController.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -152,9 +169,12 @@
 			files = (
 				78895E1E2DD1B2F600DB3ADC /* ProfileViewController.swift in Sources */,
 				78875B372DCCDBB4007DFA63 /* SceneDelegate.swift in Sources */,
+				78BAD3722DD6FF16005C7CF5 /* Constant.swift in Sources */,
 				78875B392DCCDBB4007DFA63 /* SingleImageViewController.swift in Sources */,
+				789671722DDC3C1C00B18A02 /* AuthViewController.swift in Sources */,
 				78875B3B2DCCDBB4007DFA63 /* ImagesListViewController.swift in Sources */,
 				78895E1C2DD1B2EF00DB3ADC /* AppDelegate.swift in Sources */,
+				789671742DDC3D1E00B18A02 /* WebViewViewController.swift in Sources */,
 				78875B3C2DCCDBB4007DFA63 /* ImagesListCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
