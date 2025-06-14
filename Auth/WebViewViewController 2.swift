@@ -52,7 +52,7 @@ final class WebViewViewController: UIViewController{
                 print("2")
                 return
             }
-            print("🌐 URL авторизации: \(url.absoluteString)")
+            
             let request = URLRequest(url: url)
             webView.load(request)
         }
@@ -71,12 +71,12 @@ extension WebViewViewController: WKNavigationDelegate {
             decisionHandler(.allow)
         }
     }
-    
+
     private func code(from navigationAction: WKNavigationAction) -> String? {
         if
             let url = navigationAction.request.url,
             
-                let urlComponents = URLComponents(string: url.absoluteString),
+            let urlComponents = URLComponents(string: url.absoluteString),
             urlComponents.path == "/oauth/authorize/native",
             let items = urlComponents.queryItems,
             let codeItem = items.first(where: { $0.name == "code" })
@@ -96,12 +96,12 @@ extension WebViewViewController: WKNavigationDelegate {
             context: nil)
         updateProgress()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), context: nil)
     }
-    
+
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == #keyPath(WKWebView.estimatedProgress) {
             updateProgress()
@@ -109,9 +109,30 @@ extension WebViewViewController: WKNavigationDelegate {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
-    
+
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
         progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
     }
+    
+    func makeOAuthTokenRequest(code: String) -> URLRequest {
+        var urlComponents = URLComponents(string: "https://unsplash.com")
+        urlComponents?.path = "/oauth/token"
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "client_id", value: "\(Constants.AccessKey)"),
+            URLQueryItem(name: "client_secret", value: "\(Constants.SecretKey)"),
+            URLQueryItem(name: "redirect_uri", value: "\(Constants.RedirectURI)"),
+            URLQueryItem(name: "code", value: code),
+            URLQueryItem(name: "grant_type", value: "authorization_code"),
+            ]
+        guard let url = urlComponents?.url else {
+            fatalError("Ошибка OAuth token")
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        return request
+    }
 }
+
+    
+

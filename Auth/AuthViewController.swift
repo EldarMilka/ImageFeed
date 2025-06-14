@@ -7,9 +7,74 @@
 
 import UIKit
 
+protocol AuthViewControllerDelegate: AnyObject {
+    func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String)
+}
+
 final class AuthViewController: UIViewController {
-    
     private let showWebView = "ShowWebView"
-       }
     
+    weak var delegate: AuthViewControllerDelegate?
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == showWebView {
+            guard let webViewVC = segue.destination as? WebViewViewController else {
+                assertionFailure("Не удалось привести segue.destination к WebViewViewController")
+                return
+            }
+            webViewVC.delegate = self
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
+    }
+}
+
+extension AuthViewController: WebViewControllerDelegate {
+    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+        delegate?.authViewController(self, didAuthenticateWithCode: code)
+        print("📥 Получен код авторизации: \(code)")
+        
+        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+            switch result {
+            case .success(let tokenResponse):
+                print("✅ Авторизация успешна! Access token: \(tokenResponse.access_token)")
+
+                OAuth2TokenStorage().token = tokenResponse.access_token
+
+              
+                DispatchQueue.main.async {
+                    self?.delegate?.authViewController(self!, didAuthenticateWithCode: code)
+                }
+                
+                DispatchQueue.main.async {
+                    self?.dismiss(animated: true) {
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        if let imagesListVC = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController") as? ImagesListViewController {
+                            imagesListVC.modalPresentationStyle = .fullScreen
+                            self?.present(imagesListVC, animated: true)
+                        } else {
+                            print("❌ Не удалось найти ImagesListViewController по ID")
+                        }
+                    }
+                }
+
+            
+            case .failure(let error):
+                print("❌ Ошибка при получении токена: \(error.localizedDescription)")
+                
+                // Можно показать UIAlert:
+                let alert = UIAlertController(
+                    title: "Ошибка",
+                    message: "Не удалось получить токен. Попробуйте ещё раз.\n\(error.localizedDescription)",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self?.present(alert, animated: true)
+            }
+        }
+    }
+    
+    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
+        dismiss(animated: true)
+    }
+}
