@@ -36,14 +36,15 @@ extension AuthViewController: WebViewControllerDelegate {
         
         OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
             switch result {
-            case .success(let tokenResponse):
-                print("✅ Авторизация успешна! Access token: \(tokenResponse.access_token)")
+            case .success(let token):
+                print("✅ Авторизация успешна! Access token: \(token)")
 
-                OAuth2TokenStorage().token = tokenResponse.access_token
+                OAuth2TokenStorage().token = token
 
               
-                DispatchQueue.main.async {
-                    self?.delegate?.authViewController(self!, didAuthenticateWithCode: code)
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.delegate?.authViewController(self, didAuthenticateWithCode: code)
                 }
                 
                 DispatchQueue.main.async {

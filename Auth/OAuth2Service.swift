@@ -6,79 +6,68 @@
 //
 
 import UIKit
-
-    final class OAuth2Service {
-//        private let tokenURL = URL(string: "https://example.com/oauth/token")!
-
-        static let shared = OAuth2Service()
+final class OAuth2Service {
+    
+    static let shared = OAuth2Service()
+    
+    private init() {}
+    
+    func makeOAuthTokenRequest(code: String) -> URLRequest {
+        var urlComponents = URLComponents(string: "https://unsplash.com")
+        urlComponents?.path = "/oauth/token"
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "client_id", value: "\(Constants.AccessKey)"),
+            URLQueryItem(name: "client_secret", value: "\(Constants.SecretKey)"),
+            URLQueryItem(name: "redirect_uri", value: "\(Constants.RedirectURI)"),
+            URLQueryItem(name: "code", value: code),
+            URLQueryItem(name: "grant_type", value: "authorization_code"),
+        ]
         
-        private init() {}
-
-        
-        func makeOAuthTokenRequest(code: String) -> URLRequest {
-            var urlComponents = URLComponents(string: "https://unsplash.com")
-            urlComponents?.path = "/oauth/token"
-            urlComponents?.queryItems = [
-                URLQueryItem(name: "client_id", value: "\(Constants.AccessKey)"),
-                URLQueryItem(name: "client_secret", value: "\(Constants.SecretKey)"),
-                URLQueryItem(name: "redirect_uri", value: "\(Constants.RedirectURI)"),
-                URLQueryItem(name: "code", value: code),
-                URLQueryItem(name: "grant_type", value: "authorization_code"),
-                ]
-            
-            guard let url = urlComponents?.url else {
-                fatalError("Ошибка OAuth token")
-            }
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            return request
+        guard let url = urlComponents?.url else {
+            fatalError("Ошибка OAuth token")
         }
-
-        func fetchOAuthToken(code: String, completion: @escaping (Result<OAuthTokenResponse, Error>) -> Void) {
-                let request = makeOAuthTokenRequest(code: code)
-                
-                let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                    if let error = error {
-                        print("❌ Сетевая ошибка: \(error.localizedDescription)")
-                        DispatchQueue.main.async {
-                            completion(.failure(error))
-                        }
-                        return
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        return request
+    }
+    
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        let request = makeOAuthTokenRequest(code: code)
+        
+        let task = URLSession.shared.data(for: request) { result in
+            switch result {
+            case .success(let data):
+                do {
+                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponse.self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(tokenResponse.accessToken))
                     }
-                    
-                    guard let data else {
-                        DispatchQueue.main.async {
-                            completion(.failure(NSError(domain: "OAuth2Service", code: -1, userInfo: [NSLocalizedDescriptionKey: "Нет данных"])))
-                        }
-                        return
-                    }
-
-                    do {
-                        let tokenResponse = try JSONDecoder().decode(OAuthTokenResponse.self, from: data)
-                        DispatchQueue.main.async {
-                            completion(.success(tokenResponse))
-                        }
-                    } catch {
-                        DispatchQueue.main.async {
-                            completion(.failure(error))
-                        }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
                     }
                 }
-                
-                task.resume()
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
+        
+        task.resume()
+    }
+}
 
 struct OAuthTokenResponse: Decodable {
-    let access_token: String
-    let token_type: String
+    let accessToken: String
+    let tokenType: String
     let scope: String
-    let created_at: Int
+    let createdAt: Int
 }
 
 struct OAuthTokenResponseBody: Decodable {
-    let access_token: String
-        let token_type: String
+    let accessToken: String
+        let tokenType: String
         let scope: String
-        let created_at: Int
+        let createdAt: Int
     }

@@ -18,11 +18,10 @@
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="WEo-ln-WTN">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" name="YP Background"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <tabBarAppearance key="standardAppearance">
                             <color key="backgroundColor" name="YP Black"/>
-                            <color key="selectionIndicatorTintColor" name="YP Black"/>
                         </tabBarAppearance>
                     </tabBar>
                     <connections>
@@ -44,7 +43,7 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="uh9-hr-ZNm" userLabel="TableVIew">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                                <color key="backgroundColor" name="YP Background"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImagesListCell" rowHeight="194" id="ItV-1S-W3T" customClass="ImagesListCell" customModule="ImageFeed" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="414" height="194"/>
@@ -55,6 +54,7 @@
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="n1p-hf-Adu" userLabel="Cell Image">
                                                     <rect key="frame" x="16" y="4" width="382" height="186"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -79,6 +79,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstItem="n1p-hf-Adu" firstAttribute="trailing" secondItem="rxs-K2-4Ny" secondAttribute="trailing" id="4au-NM-TBF"/>
                                                 <constraint firstItem="n1p-hf-Adu" firstAttribute="bottom" secondItem="1ST-FP-Ov6" secondAttribute="bottom" constant="8" id="DwM-HR-zvR"/>
@@ -91,7 +92,7 @@
                                                 <constraint firstItem="n1p-hf-Adu" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1ST-FP-Ov6" secondAttribute="trailing" constant="8" id="rTv-Iz-qTg"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <color key="backgroundColor" name="YP Background"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <connections>
                                             <outlet property="CellImage" destination="n1p-hf-Adu" id="Ho2-TK-wLr"/>
                                             <outlet property="DateLabel" destination="1ST-FP-Ov6" id="JPY-tj-Tad"/>
@@ -106,7 +107,7 @@
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" name="YP Background"/>
+                        <color key="backgroundColor" name="YP Black"/>
                         <constraints>
                             <constraint firstItem="uh9-hr-ZNm" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="LhU-ug-1tw"/>
                             <constraint firstAttribute="trailing" secondItem="uh9-hr-ZNm" secondAttribute="trailing" id="kxY-DT-anT"/>
@@ -360,7 +361,7 @@
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="yJn-Dt-lWh"/>
-                        <color key="backgroundColor" name="YP Background"/>
+                        <color key="backgroundColor" name="YP Black"/>
                         <constraints>
                             <constraint firstItem="5dT-du-inF" firstAttribute="centerY" secondItem="fvi-9H-ElW" secondAttribute="centerY" id="qav-Pr-ou4"/>
                             <constraint firstItem="5dT-du-inF" firstAttribute="centerX" secondItem="fvi-9H-ElW" secondAttribute="centerX" id="rSD-VR-CwP"/>

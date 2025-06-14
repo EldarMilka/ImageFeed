@@ -9,7 +9,7 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if let token = oauth2TokenStorage.token {
+        if oauth2TokenStorage.token != nil {
             switchToTabBarController()
         } else {
             // Show Auth Screen
@@ -60,11 +60,13 @@ extension SplashViewController: AuthViewControllerDelegate {
         oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success:
-                self.switchToTabBarController()
-            case .failure:
-                break
-            }
-        }
-    }
+            case .success(let token):
+                print("✅ Токен получен: \(token)")
+                OAuth2TokenStorage().token = token
+                           self.switchToTabBarController()
+                       case .failure(let error):
+                           print("❌ Ошибка при получении токена: \(error.localizedDescription)")
+                       }
+                   }
+               }
 }
