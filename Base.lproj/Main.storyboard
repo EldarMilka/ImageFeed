@@ -43,7 +43,7 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="uh9-hr-ZNm" userLabel="TableVIew">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" red="0.098799999999999999" green="0.10243999999999999" blue="0.13" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImagesListCell" rowHeight="194" id="ItV-1S-W3T" customClass="ImagesListCell" customModule="ImageFeed" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="414" height="194"/>
@@ -257,7 +257,7 @@
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="3Ul-1w-YhR"/>
-                        <color key="backgroundColor" name="YP Black"/>
+                        <color key="backgroundColor" red="0.098799999999999999" green="0.10243999999999999" blue="0.13" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="l0e-Ty-cn1" firstAttribute="leading" secondItem="3Ul-1w-YhR" secondAttribute="leading" constant="16" id="9CR-xc-7QO"/>
                             <constraint firstItem="sM3-KV-7JV" firstAttribute="centerX" secondItem="3Ul-1w-YhR" secondAttribute="centerX" id="IEE-Af-68c"/>

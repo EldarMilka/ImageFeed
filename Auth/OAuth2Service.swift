@@ -11,25 +11,29 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     
     private init() {}
-    
+
     func makeOAuthTokenRequest(code: String) -> URLRequest {
-        var urlComponents = URLComponents(string: "https://unsplash.com")
-        urlComponents?.path = "/oauth/token"
-        urlComponents?.queryItems = [
-            URLQueryItem(name: "client_id", value: "\(Constants.AccessKey)"),
-            URLQueryItem(name: "client_secret", value: "\(Constants.SecretKey)"),
-            URLQueryItem(name: "redirect_uri", value: "\(Constants.RedirectURI)"),
-            URLQueryItem(name: "code", value: code),
-            URLQueryItem(name: "grant_type", value: "authorization_code"),
-        ]
-        
-        guard let url = urlComponents?.url else {
-            fatalError("Ошибка OAuth token")
-        }
+        let url = URL(string: "https://unsplash.com/oauth/token")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        let bodyParams = [
+            "client_id": Constants.AccessKey,
+            "client_secret": Constants.SecretKey,
+            "redirect_uri": Constants.RedirectURI,
+            "code": code,
+            "grant_type": "authorization_code"
+        ]
+        
+        let bodyString = bodyParams
+            .map { "\($0.key)=\($0.value)" }
+            .joined(separator: "&")
+        request.httpBody = bodyString.data(using: .utf8)
+        
         return request
     }
+
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         let request = makeOAuthTokenRequest(code: code)
@@ -42,7 +46,10 @@ final class OAuth2Service {
                     DispatchQueue.main.async {
                         completion(.success(tokenResponse.accessToken))
                     }
-                } catch {
+                } catch { print("❌ Ошибка декодирования токена: \(error.localizedDescription)")
+                    if let jsonString = String(data: data, encoding: .utf8) {
+                        print("📦 Ответ сервера:\n\(jsonString)")
+                    }
                     DispatchQueue.main.async {
                         completion(.failure(error))
                     }
@@ -61,13 +68,20 @@ final class OAuth2Service {
 struct OAuthTokenResponse: Decodable {
     let accessToken: String
     let tokenType: String
+    let refreshToken: String?
     let scope: String
     let createdAt: Int
+    let userId: Int?
+    let username: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
+        case tokenType = "token_type"
+        case refreshToken = "refresh_token"
+        case scope
+        case createdAt = "created_at"
+        case userId = "user_id"
+        case username
+    }
 }
 
-struct OAuthTokenResponseBody: Decodable {
-    let accessToken: String
-        let tokenType: String
-        let scope: String
-        let createdAt: Int
-    }
