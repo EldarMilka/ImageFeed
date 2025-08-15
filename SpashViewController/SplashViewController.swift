@@ -1,11 +1,12 @@
 import UIKit
+import ProgressHUD
 
 final class SplashViewController: UIViewController {
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
 
     private let oauth2Service = OAuth2Service.shared
     private let oauth2TokenStorage = OAuth2TokenStorage()
-
+    private var isFetchingToken = false // защита от повторного входа (для себя запомнить)
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -52,21 +53,28 @@ extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
+            self.isFetchingToken = true              //  Блокируем  вход повторный
+            UIBlockingProgressHUD.show()
             self.fetchOAuthToken(code)
         }
     }
-
+    
     private func fetchOAuthToken(_ code: String) {
         oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
             guard let self = self else { return }
-            switch result {
-            case .success(let token):
-                print("✅ Токен получен: \(token)")
-                OAuth2TokenStorage().token = token
-                           self.switchToTabBarController()
-                       case .failure(let error):
-                           print("❌ Ошибка при получении токена: \(error.localizedDescription)")
-                       }
-                   }
-               }
+            DispatchQueue.main.async {
+                self.isFetchingToken = false  // разрешаем повторный вход
+                switch result {
+                case .success(let token):
+                    ProgressHUD.dismiss()
+                    print("✅ Токен получен: \(token)")
+                    OAuth2TokenStorage().token = token
+                    self.switchToTabBarController()
+                case .failure(let error):
+                    ProgressHUD.showFailed("Ошибка: \(error.localizedDescription)")
+                    print("❌ Ошибка при получении токена: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
 }
