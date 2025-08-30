@@ -6,16 +6,17 @@
 //
 
 import UIKit
+import Kingfisher
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Photo")
+//        imageView.image = UIImage(named: "Photo")
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-
+    
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Екатерина Новикова"
@@ -51,14 +52,34 @@ class ProfileViewController: UIViewController {
         return label
     }()
 
+    private let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.color = .white
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+
+    private let profileService = ProfileService.shared
+    private let processor = RoundCornerImageProcessor(cornerRadius: 35)
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypBlack
-        
-        [avatarImageView, nameLabel, loginNameLabel, logoutButton, descriptionLabel].forEach {
+
+        setupViews()
+        setupConstraints()
+        updateProfileDetails()
+        loadAvatarImage()
+    }
+
+    private func setupViews() {
+        [avatarImageView, nameLabel, loginNameLabel, logoutButton, descriptionLabel, activityIndicator].forEach {
             view.addSubview($0)
         }
+    }
 
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             avatarImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
             avatarImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
@@ -70,15 +91,83 @@ class ProfileViewController: UIViewController {
 
             loginNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
             loginNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-            loginNameLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
 
             descriptionLabel.topAnchor.constraint(equalTo: loginNameLabel.bottomAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -283),
+            descriptionLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
 
             logoutButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
+    
+    private func loadAvatarImage() {
+        guard let profile = profileService.profile,
+              let profileImage = profile.profileImage else {
+            setPlaceholderImage()
+            return
+        }
+        guard let url = URL(string: profileImage.large) else {
+            setPlaceholderImage()
+            return
+        }
+        
+        avatarImageView.kf.indicatorType = .activity
+        
+        avatarImageView.kf.setImage(
+            with: url,
+            placeholder: createPlaceholderImage(),
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .transition(.fade(0.3))
+            ]) { [weak self] result in
+                switch result {
+                case .success(let value):
+                    print("✅ Аватар загружен успешно")
+                    print("Изображение: \(value.image)")
+                    print("Тип кэша: \(value.cacheType)")
+                    print("Источник: \(value.source)")
+                case .failure(let error):
+                    print("❌ Ошибка загрузки: \(error)")
+                    self?.setPlaceholderImage()
+                }
+            }
+    }
+        
+        private func createPlaceholderImage() -> UIImage? {
+            let config = UIImage.SymbolConfiguration(pointSize: 35, weight: .regular, scale: .large)
+            return UIImage(systemName: "person.circle.fill")?
+                .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+                .withConfiguration(config)
+        }
+        
+        private func setPlaceholderImage() {
+            avatarImageView.image = createPlaceholderImage()
+            avatarImageView.contentMode = .center
+        }
+
+    private func updateProfileDetails() {
+        guard let profile = profileService.profile else {
+            activityIndicator.startAnimating()
+            return
+        }
+
+        activityIndicator.stopAnimating()
+
+        nameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
+        loginNameLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio ?? "Нет описания"
+
+        // задачи по отображению картинки нет, поэтому просто отображаем
+        if let profileImage = profile.profileImage {
+            print("\(profileImage)")
+        }
+    }
 }
+
 
