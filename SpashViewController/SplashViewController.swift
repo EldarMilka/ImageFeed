@@ -96,27 +96,27 @@ let authViewController = AuthViewController()
 
 extension SplashViewController {
     private func  setupLogo() {
-        let LogoImageView = UIImageView()
-        LogoImageView.translatesAutoresizingMaskIntoConstraints = false
+        let logoImageView = UIImageView()
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
             
             if let logoImage = UIImage(named: "splash_screen_logo"){
-                LogoImageView.image = logoImage
+                logoImageView.image = logoImage
             } else {
-                LogoImageView.image = UIImage(systemName: "photo")
+                logoImageView.image = UIImage(systemName: "photo")
                 print("фото splash_screen_logo не найдено")
-                
-                LogoImageView.contentMode = .scaleAspectFit
-                view.addSubview(LogoImageView)
+            }
+                logoImageView.contentMode = .scaleAspectFit
+                view.addSubview(logoImageView)
                 
                 NSLayoutConstraint.activate([
-                    LogoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                    LogoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                    LogoImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
-                    LogoImageView.heightAnchor.constraint(equalTo: LogoImageView.widthAnchor)
+                    logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                    logoImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
+                    logoImageView.heightAnchor.constraint(equalTo: logoImageView.widthAnchor)
                    ])
                }
             }
-        }
+        
     
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
