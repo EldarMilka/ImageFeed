@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      configurationForConnecting connectingSceneSession: UISceneSession,
                      options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        let sceneConfuguration = UISceneConfiguration(name: "Main",
+        let sceneConfuguration = UISceneConfiguration(name: "Default Configuration",
                                                       sessionRole: connectingSceneSession.role)
         sceneConfuguration.delegateClass = SceneDelegate.self
         return sceneConfuguration
