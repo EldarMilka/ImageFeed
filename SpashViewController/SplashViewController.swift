@@ -10,7 +10,7 @@ final class SplashViewController: UIViewController {
 
     override func viewDidLoad() {
             super.viewDidLoad()
-            setuplogo()
+            setupLogo()
         view.backgroundColor = .ypBlack
         }
     
@@ -95,7 +95,7 @@ let authViewController = AuthViewController()
 }
 
 extension SplashViewController {
-    private func  setuplogo() {
+    private func  setupLogo() {
         let LogoImageView = UIImageView()
         LogoImageView.translatesAutoresizingMaskIntoConstraints = false
             
