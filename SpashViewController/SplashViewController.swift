@@ -11,6 +11,7 @@ final class SplashViewController: UIViewController {
     override func viewDidLoad() {
             super.viewDidLoad()
             setuplogo()
+        view.backgroundColor = .ypBlack
         }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -78,7 +79,7 @@ let authViewController = AuthViewController()
             switch result {
             case .success(let token):
                 print("✅ Токен получен: \(token)")
-                oauth2TokenStorage.token = token
+                self.oauth2TokenStorage.token = token
                 // ✅ ВАЖНОЕ ИСПРАВЛЕНИЕ: Убираем вызов fetchProfile отсюда!
                 // Мы просто сохранили токен. Этого достаточно.
                 // Выйдя из экрана авторизации, мы снова окажемся в SplashViewController,
@@ -93,6 +94,30 @@ let authViewController = AuthViewController()
     }
 }
 
+extension SplashViewController {
+    private func  setuplogo() {
+        let LogoImageView = UIImageView()
+        LogoImageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            if let logoImage = UIImage(named: "splash_screen_logo"){
+                LogoImageView.image = logoImage
+            } else {
+                LogoImageView.image = UIImage(systemName: "photo")
+                print("фото splash_screen_logo не найдено")
+                
+                LogoImageView.contentMode = .scaleAspectFit
+                view.addSubview(LogoImageView)
+                
+                NSLayoutConstraint.activate([
+                    LogoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    LogoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                    LogoImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
+                    LogoImageView.heightAnchor.constraint(equalTo: LogoImageView.widthAnchor)
+                   ])
+               }
+            }
+        }
+    
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         // Закрываем экран авторизации
@@ -104,30 +129,6 @@ extension SplashViewController: AuthViewControllerDelegate {
     }
 }
 
-extension SplashViewController {
-    private func  setuplogo() {
-        let SetLogoImage = UIImageView()
-            SetLogoImage.translatesAutoresizingMaskIntoConstraints = false
-            
-            if let logoImage = UIImage(named: "splash_screen_logo"){
-                SetLogoImage.image = logoImage
-            } else {
-                SetLogoImage.image = UIImage(systemName: "photo")
-                print("фото splash_screen_logo не найдено")
-                
-                SetLogoImage.contentMode = .scaleAspectFit
-                view.addSubview(SetLogoImage)
-                
-                NSLayoutConstraint.activate([
-                    SetLogoImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                    SetLogoImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                    SetLogoImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
-                    SetLogoImage.heightAnchor.constraint(equalTo: SetLogoImage.widthAnchor)
-                   ])
-               }
-            }
-        }
-    
 
 //extension SplashViewController {
 ////    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
