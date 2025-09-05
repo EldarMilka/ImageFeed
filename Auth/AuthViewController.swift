@@ -13,9 +13,14 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-//    private let showWebView = "ShowWebView"
+    private let showWebView = "ShowWebView"
     
     weak var delegate: AuthViewControllerDelegate?
+    
+    override func viewDidLoad() {
+            super.viewDidLoad()
+            performSegue(withIdentifier: showWebView, sender: self)
+        }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowWebView" {
