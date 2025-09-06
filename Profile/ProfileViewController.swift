@@ -30,7 +30,7 @@ final class ProfileViewController: UIViewController {
         let label = UILabel()
         label.text = "@ekaterina_nov"
         label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = .white
+        label.textColor = .ypGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

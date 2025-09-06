@@ -48,19 +48,31 @@ final class SplashViewController: UIViewController {
         UIBlockingProgressHUD.show()
         profileService.fetchProfile(token) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
-
+            
             guard let self else { return }
-
+            
             switch result {
             case .success:
                 switchToTabBarController()
-
+                
             case .failure(let error):
                 print("❌ Ошибка загрузки профиля: \(error.localizedDescription)")
-                // TODO: Показать ошибку пользователю
-                showAuthScreen()
+                DispatchQueue.main.async {
+                    // Создаем новый экземпляр AuthViewController для показа алерта
+                    self.showNetworkErrorAlert(message: "Не удалось войти в систему")                   //showAuthScreen()
+                }
             }
         }
+    }
+    
+    func showNetworkErrorAlert(message: String? = nil) {  // добавил алерт при ошибке
+        let alert = UIAlertController(title: "что-то пошло не так",
+                                      message: message ?? "Не удалось войти в систему",
+                                      preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 
     private func showAuthScreen() {
@@ -88,6 +100,10 @@ final class SplashViewController: UIViewController {
 
             case .failure(let error):
                 print("❌ Ошибка при получении токена: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    // Создаем новый экземпляр AuthViewController для показа алерта
+                    self.showNetworkErrorAlert(message: "Не удалось войти в систему")                   //showAuthScreen()
+                }
                 // Показываем экран авторизации снова, чтобы пользователь попробовал еще раз
                 self.showAuthScreen()
             }
@@ -109,11 +125,14 @@ extension SplashViewController {
                 logoImageView.contentMode = .scaleAspectFit
                 view.addSubview(logoImageView)
                 
+        let logoWidth: CGFloat = 75
+        let logoHeight: CGFloat = 77.68
+        
                 NSLayoutConstraint.activate([
                     logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                    logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                    logoImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
-                    logoImageView.heightAnchor.constraint(equalTo: logoImageView.widthAnchor)
+                    logoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 368),
+                    logoImageView.widthAnchor.constraint(equalToConstant: logoWidth),
+                    logoImageView.heightAnchor.constraint(equalToConstant: logoHeight)
                    ])
                }
             }

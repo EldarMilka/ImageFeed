@@ -33,6 +33,16 @@ final class AuthViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
+    
+    func showNetworkErrorAlert(message: String? = nil) {  // добавил алерт при ошибке
+        let alert = UIAlertController(title: "что-то пошло не так",
+                                      message: message ?? "Не удалось войти в систему",
+                                      preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
 }
 
 extension AuthViewController: WebViewControllerDelegate {
@@ -47,3 +57,5 @@ extension AuthViewController: WebViewControllerDelegate {
         dismiss(animated: true)
     }
 }
+
+
