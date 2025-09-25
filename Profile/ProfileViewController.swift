@@ -11,7 +11,7 @@ import Kingfisher
 final class ProfileViewController: UIViewController {
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
-//        imageView.image = UIImage(named: "Photo")
+        //        imageView.image = UIImage(named: "Photo")
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -25,7 +25,7 @@ final class ProfileViewController: UIViewController {
         label.textColor = .white
         return label
     }()
-
+    
     private let loginNameLabel: UILabel = {
         let label = UILabel()
         label.text = "@ekaterina_nov"
@@ -34,7 +34,7 @@ final class ProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
     private let logoutButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "ipad.and.arrow.forward"), for: .normal)
@@ -42,7 +42,7 @@ final class ProfileViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "Hello, World!"
@@ -51,7 +51,7 @@ final class ProfileViewController: UIViewController {
         label.textColor = .white
         return label
     }()
-
+    
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.color = .white
@@ -59,46 +59,67 @@ final class ProfileViewController: UIViewController {
         indicator.hidesWhenStopped = true
         return indicator
     }()
-
+    
     private let profileService = ProfileService.shared
     private let processor = RoundCornerImageProcessor(cornerRadius: 35)
-
+    
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main)
+        {[weak self] _ in guard let self = self else { return }
+            self.updateAvatar()
+        }
+        updateAvatar()
+    
+        
         view.backgroundColor = .ypBlack
-
+        
         setupViews()
         setupConstraints()
         updateProfileDetails()
         loadAvatarImage()
     }
-
+    
+    private func updateAvatar() {
+        guard
+            let profileImageUrl = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageUrl)
+                else { return }
+        }
+    
     private func setupViews() {
         [avatarImageView, nameLabel, loginNameLabel, logoutButton, descriptionLabel, activityIndicator].forEach {
             view.addSubview($0)
         }
     }
-
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             avatarImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
             avatarImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             avatarImageView.widthAnchor.constraint(equalToConstant: 70),
             avatarImageView.heightAnchor.constraint(equalTo: avatarImageView.widthAnchor),
-
+            
             nameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 8),
             nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
-
+            
             loginNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
             loginNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-
+            
             descriptionLabel.topAnchor.constraint(equalTo: loginNameLabel.bottomAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-
+            
             logoutButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-
+            
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
@@ -138,31 +159,31 @@ final class ProfileViewController: UIViewController {
                 }
             }
     }
-        
-        private func createPlaceholderImage() -> UIImage? {
-            let config = UIImage.SymbolConfiguration(pointSize: 35, weight: .regular, scale: .large)
-            return UIImage(systemName: "person.circle.fill")?
-                .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
-                .withConfiguration(config)
-        }
-        
-        private func setPlaceholderImage() {
-            avatarImageView.image = createPlaceholderImage()
-            avatarImageView.contentMode = .center
-        }
-
+    
+    private func createPlaceholderImage() -> UIImage? {
+        let config = UIImage.SymbolConfiguration(pointSize: 35, weight: .regular, scale: .large)
+        return UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(config)
+    }
+    
+    private func setPlaceholderImage() {
+        avatarImageView.image = createPlaceholderImage()
+        avatarImageView.contentMode = .center
+    }
+    
     private func updateProfileDetails() {
         guard let profile = profileService.profile else {
             activityIndicator.startAnimating()
             return
         }
-
+        
         activityIndicator.stopAnimating()
-
+        
         nameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
         loginNameLabel.text = profile.loginName
         descriptionLabel.text = profile.bio ?? "Нет описания"
-
+        
         // задачи по отображению картинки нет, поэтому просто отображаем
         if let profileImage = profile.profileImage {
             print("\(profileImage)")

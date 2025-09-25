@@ -13,7 +13,7 @@ struct ProfileResult: Codable {
     let firstName: String?
     let lastName: String?
     let bio: String?
-
+    
     private enum CodingKeys: String, CodingKey {
         case username
         case firstName = "first_name"
@@ -25,7 +25,7 @@ struct ProfileResult: Codable {
 // Для GET /users/:username
 struct ProfileImageResult: Codable {
     let profileImage: ProfileImage
-
+    
     private enum CodingKeys: String, CodingKey {
         case profileImage = "profile_image"
     }
@@ -44,7 +44,7 @@ struct Profile {
     let loginName: String
     let bio: String?
     let profileImage: ProfileImage?
-
+    
     init(from result: ProfileResult, _ imageResult: ProfileImageResult?) {
         self.username = result.username
         self.name = "\(result.firstName ?? "") \(result.lastName ?? "")".trimmingCharacters(in: .whitespaces)

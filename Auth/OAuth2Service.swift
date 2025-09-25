@@ -12,86 +12,83 @@ enum AuthServiceError: Error {
 }
 
 final class OAuth2Service {
-
+    
     static let shared = OAuth2Service()
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     private var lastCode: String?
     private var completions: [(Result<String, Error>) -> Void] = []
     private init() {}
-
+    
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
-
+        
         if let lastCode = lastCode, lastCode == code {
-                    completions.append(completion)
-                    return
-                }
+            print("[fetchOAuthToken]: AuthServiceError - повторный запрос с тем же кодом")
+            completions.append(completion)
+            return
+        }
         
         if task != nil {
-                    completions.forEach { $0(.failure(AuthServiceError.invalidRequest)) }
-                    completions.removeAll()
-                    task?.cancel()
-                    task = nil
-                }
+            print("[fetchOAuthToken]: AuthServiceError - отмена предыдущего запроса")
+            completions.forEach { $0(.failure(AuthServiceError.invalidRequest)) }
+            completions.removeAll()
+            task?.cancel()
+            task = nil
+        }
         
         lastCode = code
-                completions.append(completion)
+        completions.append(completion)
+      
         
-//        if task != nil {
-//            if lastCode != code {
-//                task?.cancel()
-//            } else {
-//                completion(.failure(AuthServiceError.invalidRequest))
-//                return
-//            }
-//        } else {
-//            if lastCode == code {
-//                completion(.failure(AuthServiceError.invalidRequest))
-//                return
-//            }
-//        }
-//        lastCode = code
-
         guard let request = makeOAuthTokenRequest(code: code) else {
+            print("[fetchOAuthToken]: AuthServiceError - неверный запрос для кода: \(code)")
             completeALL(with: .failure(AuthServiceError.invalidRequest))
             return
         }
-
-        let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+        
+        let task = urlSession.objectTask(for: request) { [weak self] ( result: Result<OAuthTokenResponse, Error>) in
             DispatchQueue.main.async {
                 defer {
                     self?.task = nil
                     self?.lastCode = nil
                 }
-
-                if let error = error {
-                    self?.completeALL(with: .failure(error))
-                    return
-                }
-
-                guard let data = data else {
-                    self?.completeALL(with: .failure(AuthServiceError.invalidRequest))
-                    return
-                }
-
-                do {
-                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponse.self, from: data)
+                
+                switch result {
+                case .success(let tokenResponse):
                     self?.completeALL(with: .success(tokenResponse.accessToken))
-                } catch {
-                    print("❌ Ошибка декодирования токена: \(error.localizedDescription)")
-                    if let jsonString = String(data: data, encoding: .utf8) {
-                        print("📦 Ответ сервера:\n\(jsonString)")
-                    }
+                case .failure(let error):
+                    print("[fetchOAuthToken]: \(error) - код: \(code)")
                     self?.completeALL(with: .failure(error))
                 }
+                
+//                if let error = error {
+//                    self?.completeALL(with: .failure(error))
+//                    return
+//                }
+//                
+//                guard let data = data else {
+//                    self?.completeALL(with: .failure(AuthServiceError.invalidRequest))
+//                    return
+//                }
+                
+//                do {
+//                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponse.self, from: data)
+//                    self?.completeALL(with: .success(tokenResponse.accessToken))
+//                } catch {
+//                    print("❌ Ошибка декодирования токена: \(error.localizedDescription)")
+//                    if let jsonString = String(data: data, encoding: .utf8) {
+//                        print("📦 Ответ сервера:\n\(jsonString)")
+//                    }
+//                    self?.completeALL(with: .failure(error))
+                
             }
         }
-
+        
         self.task = task
         task.resume()
     }
-
+    
     private func completeALL(with result: Result<String, Error>) {
         completions.forEach{ $0(result)}
         completions.removeAll()
@@ -102,11 +99,11 @@ final class OAuth2Service {
             assertionFailure("❌ Ошибка: невозможно создать URL")
             return nil
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-
+        
         let bodyParams = [
             "client_id": Constants.AccessKey,
             "client_secret": Constants.SecretKey,
@@ -114,11 +111,11 @@ final class OAuth2Service {
             "code": code,
             "grant_type": "authorization_code"
         ]
-
+        
         let bodyString = bodyParams
             .map { "\($0.key)=\($0.value)" }
             .joined(separator: "&")
-
+        
         request.httpBody = bodyString.data(using: .utf8)
         return request
     }
@@ -132,7 +129,7 @@ struct OAuthTokenResponse: Decodable {
     let createdAt: Int
     let userId: Int?
     let username: String?
-
+    
     private enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
         case tokenType = "token_type"

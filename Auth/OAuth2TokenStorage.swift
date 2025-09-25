@@ -12,8 +12,9 @@ import SwiftKeychainWrapper
 
 
 final class OAuth2TokenStorage {
+    static let shared = OAuth2TokenStorage(); private init() {}
     private let tokenKey = "OAuthToken"
-
+    
     var token: String? {
         get {
             return KeychainWrapper.standard.string(forKey: tokenKey)
@@ -23,10 +24,10 @@ final class OAuth2TokenStorage {
                 let isSuccess = KeychainWrapper.standard.set(token, forKey: tokenKey)
                 
                 if !isSuccess {
-                                    print("⚠️ Ошибка: не удалось сохранить токен в Keychain")
-                                }
-                            } else {
-                                KeychainWrapper.standard.removeObject(forKey: tokenKey)
+                    print("⚠️ Ошибка: не удалось сохранить токен в Keychain")
+                }
+            } else {
+                KeychainWrapper.standard.removeObject(forKey: tokenKey)
             }
         }
     }

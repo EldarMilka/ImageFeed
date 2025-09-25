@@ -18,9 +18,9 @@ final class AuthViewController: UIViewController {
     weak var delegate: AuthViewControllerDelegate?
     
     override func viewDidLoad() {
-            super.viewDidLoad()
-            performSegue(withIdentifier: showWebView, sender: self)
-        }
+        super.viewDidLoad()
+        performSegue(withIdentifier: showWebView, sender: self)
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowWebView" {
@@ -50,7 +50,7 @@ extension AuthViewController: WebViewControllerDelegate {
         ProgressHUD.show("Loading…")
         delegate?.authViewController(self, didAuthenticateWithCode: code)
         print("📥 Получен код авторизации: \(code)")
-  
+        
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
