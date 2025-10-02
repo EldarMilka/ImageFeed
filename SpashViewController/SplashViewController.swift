@@ -109,7 +109,7 @@ final class SplashViewController: UIViewController {
                 // Мы просто сохранили токен. Этого достаточно.
                 // Выйдя из экрана авторизации, мы снова окажемся в SplashViewController,
                 // который в viewDidAppear увидит токен и сам вызовет fetchProfile.
-                
+                fetchProfile(token: token)
             case .failure(let error):
                 print("❌ Ошибка при получении токена: \(error.localizedDescription)")
                 DispatchQueue.main.async {
