@@ -5,7 +5,7 @@
 //  Created by Эльдар Милкаманавичюс on 06.09.2025.
 //
 
-
+import Foundation
 
 struct PhotoResult: Codable {
     let id: String?
@@ -52,14 +52,14 @@ struct UrlsResult: Codable {
     }
 }
 
-struct Photo {
-    let id: String
-    let size: CGSize
-    let createdAt: Date?
-    let welcomeDescription: String?
-    let thumbImageURL: String
-    let largeImageURL: String
-    let isLiked: Bool
+public struct Photo {
+    public let id: String
+    public let size: CGSize
+    public let createdAt: Date?
+    public let welcomeDescription: String?
+    public let thumbImageURL: String
+    public let largeImageURL: String
+    public let isLiked: Bool
     
 //    private enum CodingKeys: String, CodingKey {
 //        case id

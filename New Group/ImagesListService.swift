@@ -6,28 +6,34 @@
 //
 import Foundation
 
-final class ImagesListService {
-    private(set) var photos: [Photo] = []
+public final class ImagesListService {
+   public  private(set) var photos: [Photo] = []
     private var lastLoadedPage: Int?
     private var perPage: Int = 10
     private var currentTask: URLSessionTask?
     private let urlSession = URLSession.shared
-    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
-    static let shared = ImagesListService(); private init(){}
+    public static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
+   public  static let shared = ImagesListService(); private init(){}
     
     
-    func fetchPhotosNextPage() {
-        
+   public  func fetchPhotosNextPage() {
+       print("🟡 Начинаем загрузку страницы...")
         //если идет закачка то прерываем
-        guard currentTask == nil else { return }
+        guard currentTask == nil else {print("🔴 Уже идет загрузка, прерываем")
+         return }
         
         // Здесь получим страницу номер 1, если ещё не загружали ничего,
         // и следующую страницу (на единицу больше), если есть предыдущая загруженная страница
         let nextPage = (lastLoadedPage ?? 0) + 1
+       print("🟡 Загружаем страницу: \(nextPage)")
 
       
-        guard let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=\(perPage)") else { return }
-        
+       // guard let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=\(perPage)") else
+      // guard let url = URL(string: "https://jsonplaceholder.typicode.com/photos?_page=1&_limit=1") else
+       guard let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=\(perPage)") else { print("🔴 Неверный URL")
+            return }
+       print("🟡 URL: \(url)")
+       
         var request = URLRequest(url: url)
         request.setValue("Bearer \(Constants.AccessKey)", forHTTPHeaderField: "Authorization")
         
@@ -79,7 +85,7 @@ final class ImagesListService {
     }
     
     // Дополнительные методы для очистки (опционально)
-    func clean() {
+   public func clean() {
         photos = []
         lastLoadedPage = nil
         currentTask?.cancel()
