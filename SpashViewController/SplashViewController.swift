@@ -52,7 +52,7 @@ final class SplashViewController: UIViewController {
             guard let self else { return }
             
             switch result {
-            case .success(let profile):
+            case .success(_):
                 if let username = self.profileService.profile?.username {
                     ProfileImageService.shared.fetchProfileImageUrl(username: username) {result in
                     }

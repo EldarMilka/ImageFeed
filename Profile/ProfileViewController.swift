@@ -1,5 +1,5 @@
 //
-//  Untitled.swift
+//  ProfileViewController.swift
 //  ImageFeed
 //
 //  Created by Эльдар on 05.05.2025.
@@ -11,7 +11,6 @@ import Kingfisher
 final class ProfileViewController: UIViewController {
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        //        imageView.image = UIImage(named: "Photo")
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -65,7 +64,6 @@ final class ProfileViewController: UIViewController {
     
     private var profileImageServiceObserver: NSObjectProtocol?
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -77,7 +75,6 @@ final class ProfileViewController: UIViewController {
             self.updateAvatar()
         }
         updateAvatar()
-    
         
         view.backgroundColor = .ypBlack
         
@@ -85,14 +82,44 @@ final class ProfileViewController: UIViewController {
         setupConstraints()
         updateProfileDetails()
         loadAvatarImage()
+        
+        logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
+    }
+    
+    @objc private func didTapLogoutButton() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Выйти из аккаунта?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "ДА", style: .default) { [weak self] _ in
+            ProfileLogoutService.shared.logout()
+            self?.switchToSplashScreen()
+        })
+        
+        alert.addAction(UIAlertAction(title: "НЕТ", style: .cancel))
+        present(alert, animated: true)
+    }
+    
+    private func switchToSplashScreen() {
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("Invalid window configuration")
+            return
+        }
+        
+        let splashVC = SplashViewController()
+        window.rootViewController = splashVC
     }
     
     private func updateAvatar() {
         guard
             let profileImageUrl = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageUrl)
-                else { return }
-        }
+        else { return }
+        
+        avatarImageView.kf.setImage(with: url)
+    }
     
     private func setupViews() {
         [avatarImageView, nameLabel, loginNameLabel, logoutButton, descriptionLabel, activityIndicator].forEach {
@@ -184,11 +211,8 @@ final class ProfileViewController: UIViewController {
         loginNameLabel.text = profile.loginName
         descriptionLabel.text = profile.bio ?? "Нет описания"
         
-        // задачи по отображению картинки нет, поэтому просто отображаем
         if let profileImage = profile.profileImage {
             print("\(profileImage)")
         }
     }
 }
-
-
