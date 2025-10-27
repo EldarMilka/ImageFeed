@@ -11,7 +11,10 @@
 		1D2202F82E5CCFF700C5E9D6 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2202F72E5CCFF700C5E9D6 /* ProfileService.swift */; };
 		1D353AD12E70A2440088219E /* ProfileImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D353AD02E70A2440088219E /* ProfileImageService.swift */; };
 		1D4CF3872DFD7F0D005CAC35 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4CF3862DFD7F0D005CAC35 /* SplashViewController.swift */; };
+		1D6901372EACD64B00799654 /* ProfileLogoutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6901362EACD64B00799654 /* ProfileLogoutService.swift */; };
 		1D69509B2DE1FBD5002EAB6B /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D69509A2DE1FBD5002EAB6B /* WebKit.framework */; };
+		1D8D5CF72EA6AE4400809A46 /* ImagesListModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D353ACF2E6CC3FF0088219E /* ImagesListModels.swift */; };
+		1D8D5CF82EA7FB9000809A46 /* ImagesListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D353ACE2E6CC2B70088219E /* ImagesListService.swift */; };
 		1D8EC5D82DFD7E0700430306 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1D8EC5D62DFD7E0700430306 /* Main.storyboard */; };
 		1D9231C02E01B09100E6899A /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 1D9231BF2E01B09100E6899A /* ProgressHUD */; };
 		1DA0EFC52E0312B200BE0A64 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA0EFC42E0312B200BE0A64 /* UIBlockingProgressHUD.swift */; };
@@ -41,6 +44,7 @@
 		1D353ACF2E6CC3FF0088219E /* ImagesListModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListModels.swift; sourceTree = "<group>"; };
 		1D353AD02E70A2440088219E /* ProfileImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageService.swift; sourceTree = "<group>"; };
 		1D4CF3862DFD7F0D005CAC35 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		1D6901362EACD64B00799654 /* ProfileLogoutService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLogoutService.swift; sourceTree = "<group>"; };
 		1D69509A2DE1FBD5002EAB6B /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		1D8EC5D72DFD7E0700430306 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		1DA0EFC42E0312B200BE0A64 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
@@ -84,6 +88,7 @@
 				1D2202F32E5CC7FD00C5E9D6 /* ProfileModels.swift */,
 				1D2202F72E5CCFF700C5E9D6 /* ProfileService.swift */,
 				1D353AD02E70A2440088219E /* ProfileImageService.swift */,
+				1D6901362EACD64B00799654 /* ProfileLogoutService.swift */,
 			);
 			path = ProfileService;
 			sourceTree = "<group>";
@@ -281,14 +286,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				1DD2E6DB2DFC94E600E9AE42 /* OAuth2TokenStorage.swift in Sources */,
+				1D8D5CF72EA6AE4400809A46 /* ImagesListModels.swift in Sources */,
 				78895E1E2DD1B2F600DB3ADC /* ProfileViewController.swift in Sources */,
 				78875B372DCCDBB4007DFA63 /* SceneDelegate.swift in Sources */,
 				78BAD3722DD6FF16005C7CF5 /* Constant.swift in Sources */,
+				1D8D5CF82EA7FB9000809A46 /* ImagesListService.swift in Sources */,
 				78875B392DCCDBB4007DFA63 /* SingleImageViewController.swift in Sources */,
 				789671722DDC3C1C00B18A02 /* AuthViewController.swift in Sources */,
 				1DE1DC962E689B4A005AE80C /* TabBarViewController.swift in Sources */,
 				1D2202F42E5CC7FD00C5E9D6 /* ProfileModels.swift in Sources */,
 				1D4CF3872DFD7F0D005CAC35 /* SplashViewController.swift in Sources */,
+				1D6901372EACD64B00799654 /* ProfileLogoutService.swift in Sources */,
 				78875B3B2DCCDBB4007DFA63 /* ImagesListViewController.swift in Sources */,
 				78895E1C2DD1B2EF00DB3ADC /* AppDelegate.swift in Sources */,
 				1D2202F82E5CCFF700C5E9D6 /* ProfileService.swift in Sources */,
@@ -345,7 +353,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = EldarMilka.ImageFeed;
+				PRODUCT_BUNDLE_IDENTIFIER = com.elder.ImageFeed2025;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -377,7 +385,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = EldarMilka.ImageFeed;
+				PRODUCT_BUNDLE_IDENTIFIER = com.elder.ImageFeed2025;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
