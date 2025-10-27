@@ -13,6 +13,8 @@ final class ProfileViewController: UIViewController {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 35
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -48,6 +50,7 @@ final class ProfileViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 13)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
+        label.numberOfLines = 0
         return label
     }()
     
@@ -64,8 +67,12 @@ final class ProfileViewController: UIViewController {
     
     private var profileImageServiceObserver: NSObjectProtocol?
     
+    private var gradientLayers: [CAGradientLayer] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        showProfileSkeleton()
         
         profileImageServiceObserver = NotificationCenter.default.addObserver(
             forName: ProfileImageService.didChangeNotification,
@@ -83,8 +90,98 @@ final class ProfileViewController: UIViewController {
         updateProfileDetails()
         loadAvatarImage()
         
+        setupProfileNotifications()
+        
         logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
+        
+        if profileService.profile != nil {
+            hideProfileSkeleton()
+        } else {
+            activityIndicator.startAnimating()
+        }
     }
+    
+    private func setupProfileNotifications() {
+        NotificationCenter.default.addObserver(
+            forName: ProfileService.didChangeNotification,
+            object: nil,
+            queue: .main)
+        { [weak self] _ in
+            self?.hideProfileSkeleton()
+            self?.updateProfileDetails()
+        }
+    }
+
+    deinit{
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    private func showProfileSkeleton() {
+        
+        hideProfileSkeleton()
+        
+        
+        addGradientSkeleton(to: avatarImageView, size: CGSize(width: 70, height: 70), cornerRadius: 35 )
+        
+        addGradientSkeleton(to: nameLabel, size: CGSize(width: 200, height: 24), cornerRadius: 8 )
+
+        addGradientSkeleton(to: loginNameLabel, size: CGSize(width: 150, height: 18 ), cornerRadius: 6 )
+
+        addGradientSkeleton(to: descriptionLabel, size: CGSize(width: 250, height: 36), cornerRadius: 6 )
+
+        startGradientAnimation()
+        
+        nameLabel.text = ""
+                loginNameLabel.text = ""
+                descriptionLabel.text = ""
+    }
+    
+    
+    private func hideProfileSkeleton() {
+        gradientLayers.forEach{
+            gradient in
+            gradient.removeAllAnimations()
+            gradient.removeFromSuperlayer()
+        }
+        gradientLayers.removeAll()
+        
+        activityIndicator.stopAnimating()
+        }
+        
+    
+    
+    private func addGradientSkeleton(to view: UIView, size: CGSize, cornerRadius: CGFloat){
+        let gradient = CAGradientLayer()
+        gradient.frame = CGRect(origin: .zero, size: size)
+        gradient.locations = [0, 0.1, 0.3]
+        gradient.colors = [
+            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha:  1).cgColor,
+            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
+            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+        ]
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint = CGPoint(x: 1, y: 0.5)
+        gradient.cornerRadius = cornerRadius
+        gradient.masksToBounds = true
+        
+        gradientLayers.append(gradient)
+        view.layer.addSublayer(gradient)
+    }
+    
+    private func startGradientAnimation() {
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.fromValue = [0, 0.1, 0.3]
+        animation.toValue = [0, 0.8, 1]
+        animation.duration = 1.5
+        animation.repeatCount = .infinity
+        animation.autoreverses = true
+        
+        gradientLayers.forEach { gradient in
+            gradient.add(animation, forKey: "skeletonAnimation")
+        }
+    }
+    
+    
     
     @objc private func didTapLogoutButton() {
         let alert = UIAlertController(

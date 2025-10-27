@@ -9,7 +9,7 @@ import Foundation
 
 final class ProfileService {
     static let shared = ProfileService()
-    
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileServiceDidChange")
     private var profileTask: URLSessionTask?
     private var imageTask: URLSessionTask?
     
@@ -77,6 +77,11 @@ final class ProfileService {
                 let profile = Profile(from: profileResult, profileImageResult)
                 
                 self.profile = profile
+                
+                NotificationCenter.default.post(
+                    name: ProfileService.didChangeNotification,
+                    object: self
+                )
                 
                 DispatchQueue.main.async {
                     completion(.success(profile))
