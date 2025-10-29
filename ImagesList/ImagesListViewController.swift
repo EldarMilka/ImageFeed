@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ImagesListViewController.swift
 //  ImageFeed
 //
 //  Created by Эльдар on 28.04.2025.
@@ -16,6 +16,9 @@ final class ImagesListViewController: UIViewController {
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private let imagesListService = ImagesListService.shared
     private let oauth2TokenStorage = OAuth2TokenStorage.shared
+    
+    // Для хранения градиентных вью
+    private var gradientViews: [IndexPath: GradientAnimationView] = [:]
    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -40,6 +43,12 @@ final class ImagesListViewController: UIViewController {
         imagesListService.fetchPhotosNextPage()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Останавливаем все анимации при уходе с экрана
+        stopAllGradientAnimations()
+    }
+    
     @objc private func updateTableViewAnimated() {
         print("🟡 Получена нотификация об изменении фото")
         
@@ -57,7 +66,13 @@ final class ImagesListViewController: UIViewController {
         } completion: { _ in }
     }
     
+    private func stopAllGradientAnimations() {
+        gradientViews.values.forEach { $0.stopAnimating() }
+        gradientViews.removeAll()
+    }
+    
     deinit {
+        stopAllGradientAnimations()
         NotificationCenter.default.removeObserver(self)
     }
 }
@@ -86,23 +101,68 @@ extension ImagesListViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         let photo = photos[indexPath.row]
         
+        // Сначала показываем градиент
+        showGradientForCell(cell, at: indexPath)
+        
         cell.configure(with: photo)
         cell.delegate = self
         
-        cell.cellImage.image = UIImage(named: "load")
-        cell.cellImage.kf.indicatorType = .activity
+        cell.cellImage.image = nil // Очищаем изображение
         
         if let url = URL(string: photo.thumbImageURL) {
             cell.cellImage.kf.setImage(
                 with: url,
                 placeholder: UIImage(named: "load"),
-                options: [.transition(.fade(0.3))])
+                options: [.transition(.fade(0.3))]) { [weak self] result in
+                    // Когда изображение загружено, скрываем градиент
+                    self?.hideGradientForCell(at: indexPath)
+                    
+                    switch result {
+                    case .success:
+                        print("✅ Изображение загружено для indexPath: \(indexPath)")
+                    case .failure(let error):
+                        print("❌ Ошибка загрузки изображения: \(error)")
+                    }
+                }
         }
         
         if let date = photo.createdAt {
             cell.DateLabel.text = dateFormatter.string(from: date)
         } else {
             cell.DateLabel.text = ""
+        }
+    }
+    
+    private func showGradientForCell(_ cell: ImagesListCell, at indexPath: IndexPath) {
+        // Удаляем предыдущий градиент для этой ячейки
+        hideGradientForCell(at: indexPath)
+        
+        let gradientView = GradientAnimationView()
+        gradientView.translatesAutoresizingMaskIntoConstraints = false
+        gradientView.cornerRadius = 16
+        gradientView.isHidden = false
+        
+        cell.contentView.addSubview(gradientView)
+        
+        NSLayoutConstraint.activate([
+            gradientView.topAnchor.constraint(equalTo: cell.cellImage.topAnchor),
+            gradientView.leadingAnchor.constraint(equalTo: cell.cellImage.leadingAnchor),
+            gradientView.trailingAnchor.constraint(equalTo: cell.cellImage.trailingAnchor),
+            gradientView.bottomAnchor.constraint(equalTo: cell.cellImage.bottomAnchor)
+        ])
+        
+        gradientViews[indexPath] = gradientView
+        gradientView.startAnimating()
+        
+        print("✅ Показан градиент для indexPath: \(indexPath)")
+    }
+    
+    private func hideGradientForCell(at indexPath: IndexPath) {
+        if let gradientView = gradientViews[indexPath] {
+            gradientView.stopAnimating()
+            gradientView.removeFromSuperview()
+            gradientViews.removeValue(forKey: indexPath)
+            print("✅ Скрыт градиент для indexPath: \(indexPath)")
         }
     }
     
@@ -170,6 +230,11 @@ extension ImagesListViewController: UITableViewDelegate {
             print("🟡 Достигли конца - загружаем следующую страницу")
             imagesListService.fetchPhotosNextPage()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // Останавливаем анимацию когда ячейка скрывается
+        hideGradientForCell(at: indexPath)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
