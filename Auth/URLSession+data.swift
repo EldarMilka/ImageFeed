@@ -45,7 +45,7 @@ extension URLSession {
 extension URLSession {
     func objectTask<T: Decodable>(for request:URLRequest, completion: @escaping (Result<T, Error>) -> Void) ->URLSessionTask {
         let decoder = JSONDecoder()
-       // decoder.keyDecodingStrategy = .convertFromSnakeCase
+        // decoder.keyDecodingStrategy = .convertFromSnakeCase
         
         let task = data(for: request) { (result: Result<Data, Error>) in
             switch result {
@@ -64,7 +64,7 @@ extension URLSession {
                     }
                     completion(.failure(error))
                 }
-                case .failure(let error):
+            case .failure(let error):
                 print("Ошибка запроса: \(error.localizedDescription)")
                 completion(.failure(error))
             }

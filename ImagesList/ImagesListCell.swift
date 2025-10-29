@@ -20,7 +20,7 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var LikeButtom: UIButton!
     
     weak var delegate: ImagesListCellDelegate?
-    private var photoId: String?
+    var photoId: String?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -36,8 +36,8 @@ final class ImagesListCell: UITableViewCell {
         LikeButtom.setImage(likeImage, for: .normal)
     }
     
-    @IBAction func likeButtonClicked(_ sender: UIButton) {
-        guard let photoId = photoId else {
+    @IBAction private func likeButtonClicked(_ sender: UIButton) {
+        guard let photoId else {
             print("❌ ImagesListCell: photoId не найден")
             return
         }

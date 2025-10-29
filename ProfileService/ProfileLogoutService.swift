@@ -21,19 +21,19 @@ final class ProfileLogoutService {
     
     private func cleanProfileData() {
         // 1. Очищаем данные профиля
-               ProfileService.shared.clean()
-               
-               // 2. Очищаем аватарку
-               ProfileImageService.shared.clean()
-               
-               // 3. Очищаем список фотографий
-               ImagesListService.shared.clean()
-               
-               // 4. Очищаем OAuth токен
-               OAuth2TokenStorage.shared.clean()
-               
-               print("✅ Все данные пользователя очищены")
-           }
+        ProfileService.shared.clean()
+        
+        // 2. Очищаем аватарку
+        ProfileImageService.shared.clean()
+        
+        // 3. Очищаем список фотографий
+        ImagesListService.shared.clean()
+        
+        // 4. Очищаем OAuth токен
+        OAuth2TokenStorage.shared.clean()
+        
+        print("✅ Все данные пользователя очищены")
+    }
     
     
     private func cleanCookies() {

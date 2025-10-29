@@ -9,17 +9,17 @@ import UIKit
 import ProgressHUD
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         ProgressHUD.animationType = .systemActivityIndicator
-                ProgressHUD.colorHUD = .white
-                ProgressHUD.colorAnimation = .black
-                
-                
+        ProgressHUD.colorHUD = .white
+        ProgressHUD.colorAnimation = .black
+        
+        
         return true
     }
     // MARK: UISceneSession Lifecycle

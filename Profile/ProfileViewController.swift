@@ -111,7 +111,7 @@ final class ProfileViewController: UIViewController {
             self?.updateProfileDetails()
         }
     }
-
+    
     deinit{
         NotificationCenter.default.removeObserver(self)
     }
@@ -124,16 +124,16 @@ final class ProfileViewController: UIViewController {
         addGradientSkeleton(to: avatarImageView, size: CGSize(width: 70, height: 70), cornerRadius: 35 )
         
         addGradientSkeleton(to: nameLabel, size: CGSize(width: 200, height: 24), cornerRadius: 8 )
-
+        
         addGradientSkeleton(to: loginNameLabel, size: CGSize(width: 150, height: 18 ), cornerRadius: 6 )
-
+        
         addGradientSkeleton(to: descriptionLabel, size: CGSize(width: 250, height: 36), cornerRadius: 6 )
-
+        
         startGradientAnimation()
         
         nameLabel.text = ""
-                loginNameLabel.text = ""
-                descriptionLabel.text = ""
+        loginNameLabel.text = ""
+        descriptionLabel.text = ""
     }
     
     
@@ -146,8 +146,8 @@ final class ProfileViewController: UIViewController {
         gradientLayers.removeAll()
         
         activityIndicator.stopAnimating()
-        }
-        
+    }
+    
     
     
     private func addGradientSkeleton(to view: UIView, size: CGSize, cornerRadius: CGFloat){

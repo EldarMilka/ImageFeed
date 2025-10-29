@@ -39,7 +39,7 @@ final class OAuth2Service {
         
         lastCode = code
         completions.append(completion)
-      
+        
         
         guard let request = makeOAuthTokenRequest(code: code) else {
             print("[fetchOAuthToken]: AuthServiceError - неверный запрос для кода: \(code)")
@@ -62,25 +62,25 @@ final class OAuth2Service {
                     self?.completeALL(with: .failure(error))
                 }
                 
-//                if let error = error {
-//                    self?.completeALL(with: .failure(error))
-//                    return
-//                }
-//                
-//                guard let data = data else {
-//                    self?.completeALL(with: .failure(AuthServiceError.invalidRequest))
-//                    return
-//                }
+                //                if let error = error {
+                //                    self?.completeALL(with: .failure(error))
+                //                    return
+                //                }
+                //                
+                //                guard let data = data else {
+                //                    self?.completeALL(with: .failure(AuthServiceError.invalidRequest))
+                //                    return
+                //                }
                 
-//                do {
-//                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponse.self, from: data)
-//                    self?.completeALL(with: .success(tokenResponse.accessToken))
-//                } catch {
-//                    print("❌ Ошибка декодирования токена: \(error.localizedDescription)")
-//                    if let jsonString = String(data: data, encoding: .utf8) {
-//                        print("📦 Ответ сервера:\n\(jsonString)")
-//                    }
-//                    self?.completeALL(with: .failure(error))
+                //                do {
+                //                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponse.self, from: data)
+                //                    self?.completeALL(with: .success(tokenResponse.accessToken))
+                //                } catch {
+                //                    print("❌ Ошибка декодирования токена: \(error.localizedDescription)")
+                //                    if let jsonString = String(data: data, encoding: .utf8) {
+                //                        print("📦 Ответ сервера:\n\(jsonString)")
+                //                    }
+                //                    self?.completeALL(with: .failure(error))
                 
             }
         }
@@ -123,20 +123,20 @@ final class OAuth2Service {
 
 struct OAuthTokenResponse: Decodable {
     let accessToken: String
-//    let tokenType: String
-//    let refreshToken: String?
-//    let scope: String
-//    let createdAt: Int
-//    let userId: Int?
-//    let username: String?
+    //    let tokenType: String
+    //    let refreshToken: String?
+    //    let scope: String
+    //    let createdAt: Int
+    //    let userId: Int?
+    //    let username: String?
     
     private enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
-//        case tokenType = "token_type"
-//        case refreshToken = "refresh_token"
-//        case scope
-//        case createdAt = "created_at"
-//        case userId = "user_id"
-//        case username
+        //        case tokenType = "token_type"
+        //        case refreshToken = "refresh_token"
+        //        case scope
+        //        case createdAt = "created_at"
+        //        case userId = "user_id"
+        //        case username
     }
 }

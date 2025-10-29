@@ -5,7 +5,7 @@
 //  Created by Эльдар Милкаманавичюс on 06.09.2025.
 //
 
-import UIKit
+import Foundation
 
 struct PhotoResult: Codable {
     let id: String?
@@ -62,12 +62,12 @@ struct Photo {
     let fullImageUrl: String
     var isLiked: Bool
     
-//    private enum CodingKeys: String, CodingKey {
-//        case id
-//        case createdAt = "created_at"
-//        case welcomeDescription = "description"
-//        case thumbImageURL = "urls.thumb"
-//        case largeImageURL = "urls.regular"
-//        case isLiked = "likes"
-//    }
+    //    private enum CodingKeys: String, CodingKey {
+    //        case id
+    //        case createdAt = "created_at"
+    //        case welcomeDescription = "description"
+    //        case thumbImageURL = "urls.thumb"
+    //        case largeImageURL = "urls.regular"
+    //        case isLiked = "likes"
+    //    }
 }

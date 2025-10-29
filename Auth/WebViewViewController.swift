@@ -36,7 +36,7 @@ final class WebViewViewController: UIViewController{
              changeHandler: { [weak self] _, _ in guard let self = self else {return}
                  self.updateProgress()
              })
-    
+        
         
         
         loadAuthView()
@@ -97,7 +97,7 @@ extension WebViewViewController: WKNavigationDelegate {
             return nil
         }
     }
-
+    
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
         progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001

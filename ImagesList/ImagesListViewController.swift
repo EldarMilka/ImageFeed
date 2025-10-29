@@ -16,7 +16,7 @@ final class ImagesListViewController: UIViewController {
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private let imagesListService = ImagesListService.shared
     private let oauth2TokenStorage = OAuth2TokenStorage.shared
-   
+    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
@@ -47,12 +47,34 @@ final class ImagesListViewController: UIViewController {
         let newCount = imagesListService.photos.count
         
         print("🟡 Старое количество: \(oldCount), Новое количество: \(newCount)")
-        photos = imagesListService.photos
+        
+        // ✅ Логируем ID фото для отладки
+        print("🟡 Старые photoIds: \(photos.map { $0.id })")
+        print("🟡 Новые photoIds: \(imagesListService.photos.map { $0.id })")
+        
+        guard newCount > oldCount else {
+            print("🟡 Новых фото нет, обновляем существующие")
+            photos = imagesListService.photos
+            tableView.reloadData()
+            return
+        }
+        
+        let newPhotos = Array(imagesListService.photos[oldCount..<newCount])
+        
+        // ✅ Проверяем новые фото на дубликаты
+        let newPhotoIds = newPhotos.map { $0.id }
+        let duplicateIds = newPhotoIds.filter { id in photos.contains(where: { $0.id == id }) }
+        if !duplicateIds.isEmpty {
+            print("❌ НАЙДЕНЫ ДУБЛИКАТЫ: \(duplicateIds)")
+        }
+        
+        photos.append(contentsOf: newPhotos)
         
         tableView.performBatchUpdates{
             let indexPaths = (oldCount..<newCount).map { index in
                 IndexPath(row: index, section: 0)
             }
+            print("🟡 Добавляем строки: \(indexPaths)")
             tableView.insertRows(at: indexPaths, with: .automatic)
         } completion: { _ in }
     }
@@ -86,17 +108,32 @@ extension ImagesListViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         let photo = photos[indexPath.row]
         
+        let currentPhotoId = photo.id
+        
         cell.configure(with: photo)
         cell.delegate = self
         
-        cell.cellImage.image = UIImage(named: "load")
+        //        cell.cellImage.image = UIImage(named: "load")
+        //        cell.cellImage.kf.indicatorType = .activity
+        cell.cellImage.image = nil
         cell.cellImage.kf.indicatorType = .activity
         
         if let url = URL(string: photo.thumbImageURL) {
             cell.cellImage.kf.setImage(
                 with: url,
                 placeholder: UIImage(named: "load"),
-                options: [.transition(.fade(0.3))])
+                options: [.transition(.fade(0.3))]) { [weak self] result in
+                    guard cell.photoId == currentPhotoId else {
+                        print("🟡 Ячейка была переиспользована, игнорируем результат для \(currentPhotoId)")
+                        return
+                    }
+                    
+                    switch result {
+                    case .success:
+                        print("✅ Изображение загружено для photoId: \(currentPhotoId)")
+                    case .failure(let error):
+                        print("❌ Ошибка загрузки: \(error) для photoId: \(currentPhotoId)")
+                    }                }
         }
         
         if let date = photo.createdAt {

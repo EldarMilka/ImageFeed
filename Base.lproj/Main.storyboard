@@ -158,8 +158,8 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kwc-mB-bm2">
                                 <rect key="frame" x="8" y="56" width="48" height="48"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="PHL-D0-Eac"/>
-                                    <constraint firstAttribute="width" constant="48" id="Who-wy-g7m"/>
+                                    <constraint firstAttribute="height" constant="48" id="PHL-D0-Eac" userLabel="height = 21"/>
+                                    <constraint firstAttribute="width" constant="48" id="Who-wy-g7m" userLabel="width = 65"/>
                                 </constraints>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="Left Accessory"/>

@@ -14,6 +14,11 @@ final class ImagesListService {
     private let urlSession = URLSession.shared
     private let oauth2TokenStorage = OAuth2TokenStorage.shared
     
+    private let iso8601DateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        return formatter
+    }()
+    
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     static let shared = ImagesListService()
     
@@ -37,7 +42,7 @@ final class ImagesListService {
         
         let nextPage = (lastLoadedPage ?? 0) + 1
         print("🟡 ImagesListService: Загружаем страницу \(nextPage)")
-      
+        
         guard let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=\(perPage)") else {
             print("❌ ImagesListService: Неверный URL")
             return
@@ -82,6 +87,7 @@ final class ImagesListService {
                 print("🟡 ImagesListService: Ответ: \(responseString)")
             }
             
+            // В ImagesListService.swift в методе fetchPhotosNextPage
             do {
                 let photosResults = try JSONDecoder().decode([PhotoResult].self, from: data)
                 print("✅✅✅ ImagesListService: УСПЕШНО декодировано \(photosResults.count) фото")
@@ -90,9 +96,18 @@ final class ImagesListService {
                 
                 DispatchQueue.main.async {
                     self.lastLoadedPage = nextPage
-                    self.photos.append(contentsOf: newPhotos)
                     
-                    print("✅ ImagesListService: Добавлено \(newPhotos.count) фото. Всего: \(self.photos.count)")
+                    // ✅ ФИЛЬТРУЕМ ДУБЛИКАТЫ
+                    let existingIds = Set(self.photos.map { $0.id })
+                    let uniqueNewPhotos = newPhotos.filter { !existingIds.contains($0.id) }
+                    
+                    if uniqueNewPhotos.count != newPhotos.count {
+                        print("❌ ImagesListService: Отфильтровали \(newPhotos.count - uniqueNewPhotos.count) дубликатов")
+                    }
+                    
+                    self.photos.append(contentsOf: uniqueNewPhotos)
+                    
+                    print("✅ ImagesListService: Добавлено \(uniqueNewPhotos.count) фото. Всего: \(self.photos.count)")
                     
                     NotificationCenter.default.post(
                         name: ImagesListService.didChangeNotification,
@@ -148,17 +163,17 @@ final class ImagesListService {
                     print("✅ ImagesListService: Лайк успешно \(isLike ? "поставлен" : "удален")")
                     DispatchQueue.main.async {
                         if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
-                                    // Создаем копию фото с обновленным состоянием лайка
-                                    var updatedPhoto = self.photos[index]
-                                    updatedPhoto.isLiked = isLike
-                                    self.photos[index] = updatedPhoto
-                                    
-                                    // Отправляем нотификацию об изменении
-                                    NotificationCenter.default.post(
-                                        name: ImagesListService.didChangeNotification,
-                                        object: self
-                                    )
-                                }
+                            // Создаем копию фото с обновленным состоянием лайка
+                            var updatedPhoto = self.photos[index]
+                            updatedPhoto.isLiked = isLike
+                            self.photos[index] = updatedPhoto
+                            
+                            // Отправляем нотификацию об изменении
+                            NotificationCenter.default.post(
+                                name: ImagesListService.didChangeNotification,
+                                object: self
+                            )
+                        }
                         completion(.success(()))
                     }
                 }else {
@@ -173,8 +188,8 @@ final class ImagesListService {
     }
     
     private func convert(photoResult: PhotoResult) -> Photo {
-        let dateFormatter = ISO8601DateFormatter()
-        let createdAt = photoResult.createdAt.flatMap { dateFormatter.date(from: $0) }
+        
+        let createdAt = photoResult.createdAt.flatMap { iso8601DateFormatter.date(from: $0) }
         
         return Photo(
             id: photoResult.id ?? "",
