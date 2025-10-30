@@ -156,13 +156,14 @@
                                 </connections>
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kwc-mB-bm2">
-                                <rect key="frame" x="8" y="56" width="48" height="48"/>
+                                <rect key="frame" x="8" y="56" width="130" height="42"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="PHL-D0-Eac" userLabel="height = 21"/>
-                                    <constraint firstAttribute="width" constant="48" id="Who-wy-g7m" userLabel="width = 65"/>
+                                    <constraint firstAttribute="height" constant="42" id="PHL-D0-Eac" userLabel="height = 21"/>
+                                    <constraint firstAttribute="width" constant="130" id="Who-wy-g7m" userLabel="width = 65"/>
                                 </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="Left Accessory"/>
+                                <state key="normal" title="" image="Left Accessory"/>
                                 <connections>
                                     <action selector="didTapBackButton" destination="pdl-vG-rsP" eventType="touchUpInside" id="Xz5-x6-DTG"/>
                                 </connections>
