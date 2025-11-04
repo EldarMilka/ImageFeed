@@ -11,11 +11,20 @@ import Kingfisher
 final class ProfileViewController: UIViewController {
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 35
         imageView.clipsToBounds = true
+        imageView.backgroundColor = .ypBlack
         return imageView
+    }()
+    
+    private let avatarGradientView: GradientAnimationView = {
+        let view = GradientAnimationView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.cornerRadius = 35
+        view.isHidden = true
+        return view
     }()
     
     private let nameLabel: UILabel = {
@@ -27,6 +36,14 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
+    private let nameGradientView: GradientAnimationView = {
+        let view = GradientAnimationView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.cornerRadius = 8
+        view.isHidden = true
+        return view
+    }()
+    
     private let loginNameLabel: UILabel = {
         let label = UILabel()
         label.text = "@ekaterina_nov"
@@ -36,12 +53,12 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
-    private let logoutButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "ipad.and.arrow.forward"), for: .normal)
-        button.tintColor = .red
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+    private let loginGradientView: GradientAnimationView = {
+        let view = GradientAnimationView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.cornerRadius = 6
+        view.isHidden = true
+        return view
     }()
     
     private let descriptionLabel: UILabel = {
@@ -54,6 +71,22 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
+    private let descriptionGradientView: GradientAnimationView = {
+        let view = GradientAnimationView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.cornerRadius = 6
+        view.isHidden = true
+        return view
+    }()
+    
+    private let logoutButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "ipad.and.arrow.forward"), for: .normal)
+        button.tintColor = .red
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.color = .white
@@ -61,127 +94,97 @@ final class ProfileViewController: UIViewController {
         indicator.hidesWhenStopped = true
         return indicator
     }()
-    
+
     private let profileService = ProfileService.shared
     private let processor = RoundCornerImageProcessor(cornerRadius: 35)
     
     private var profileImageServiceObserver: NSObjectProtocol?
-    
-    private var gradientLayers: [CAGradientLayer] = []
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        showProfileSkeleton()
+        view.backgroundColor = .ypBlack
+        setupViews()
+        setupConstraints()
+        
+        showGradientSkeleton()
         
         profileImageServiceObserver = NotificationCenter.default.addObserver(
             forName: ProfileImageService.didChangeNotification,
             object: nil,
-            queue: .main)
-        {[weak self] _ in guard let self = self else { return }
-            self.updateAvatar()
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateAvatar()
         }
-        updateAvatar()
-        
-        view.backgroundColor = .ypBlack
-        
-        setupViews()
-        setupConstraints()
-        updateProfileDetails()
-        loadAvatarImage()
         
         setupProfileNotifications()
-        
         logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
         
-        if profileService.profile != nil {
-            hideProfileSkeleton()
-        } else {
-            activityIndicator.startAnimating()
-        }
+        loadProfileData()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopAllSkeletonAnimations()
+    }
+    
+    deinit {
+        stopAllSkeletonAnimations()
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - Skeleton Loading
+    
+    private func showGradientSkeleton() {
+        nameLabel.text = ""
+        loginNameLabel.text = ""
+        descriptionLabel.text = ""
+        avatarImageView.image = nil
+        activityIndicator.startAnimating()
+        
+        startAllSkeletonAnimations()
+    }
+    
+    private func hideGradientSkeleton() {
+        stopAllSkeletonAnimations()
+        activityIndicator.stopAnimating()
+    }
+    
+    private func startAllSkeletonAnimations() {
+        avatarGradientView.startAnimating()
+        nameGradientView.startAnimating()
+        loginGradientView.startAnimating()
+        descriptionGradientView.startAnimating()
+    }
+    
+    private func stopAllSkeletonAnimations() {
+        avatarGradientView.stopAnimating()
+        nameGradientView.stopAnimating()
+        loginGradientView.stopAnimating()
+        descriptionGradientView.stopAnimating()
+    }
+    
+    // MARK: - Profile Loading
+    
+    private func loadProfileData() {
+        updateProfileDetails()
+        loadAvatarImage()
+        updateAvatar()
+        
+        hideGradientSkeleton()
     }
     
     private func setupProfileNotifications() {
         NotificationCenter.default.addObserver(
             forName: ProfileService.didChangeNotification,
             object: nil,
-            queue: .main)
-        { [weak self] _ in
-            self?.hideProfileSkeleton()
+            queue: .main
+        ) { [weak self] _ in
             self?.updateProfileDetails()
         }
     }
     
-    deinit{
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    private func showProfileSkeleton() {
-        
-        hideProfileSkeleton()
-        
-        
-        addGradientSkeleton(to: avatarImageView, size: CGSize(width: 70, height: 70), cornerRadius: 35 )
-        
-        addGradientSkeleton(to: nameLabel, size: CGSize(width: 200, height: 24), cornerRadius: 8 )
-        
-        addGradientSkeleton(to: loginNameLabel, size: CGSize(width: 150, height: 18 ), cornerRadius: 6 )
-        
-        addGradientSkeleton(to: descriptionLabel, size: CGSize(width: 250, height: 36), cornerRadius: 6 )
-        
-        startGradientAnimation()
-        
-        nameLabel.text = ""
-        loginNameLabel.text = ""
-        descriptionLabel.text = ""
-    }
-    
-    
-    private func hideProfileSkeleton() {
-        gradientLayers.forEach{
-            gradient in
-            gradient.removeAllAnimations()
-            gradient.removeFromSuperlayer()
-        }
-        gradientLayers.removeAll()
-        
-        activityIndicator.stopAnimating()
-    }
-    
-    
-    
-    private func addGradientSkeleton(to view: UIView, size: CGSize, cornerRadius: CGFloat){
-        let gradient = CAGradientLayer()
-        gradient.frame = CGRect(origin: .zero, size: size)
-        gradient.locations = [0, 0.1, 0.3]
-        gradient.colors = [
-            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha:  1).cgColor,
-            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
-            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
-        ]
-        gradient.startPoint = CGPoint(x: 0, y: 0.5)
-        gradient.endPoint = CGPoint(x: 1, y: 0.5)
-        gradient.cornerRadius = cornerRadius
-        gradient.masksToBounds = true
-        
-        gradientLayers.append(gradient)
-        view.layer.addSublayer(gradient)
-    }
-    
-    private func startGradientAnimation() {
-        let animation = CABasicAnimation(keyPath: "locations")
-        animation.fromValue = [0, 0.1, 0.3]
-        animation.toValue = [0, 0.8, 1]
-        animation.duration = 1.5
-        animation.repeatCount = .infinity
-        animation.autoreverses = true
-        
-        gradientLayers.forEach { gradient in
-            gradient.add(animation, forKey: "skeletonAnimation")
-        }
-    }
-    
-    
+    // MARK: - Logout
     
     @objc private func didTapLogoutButton() {
         let alert = UIAlertController(
@@ -209,6 +212,8 @@ final class ProfileViewController: UIViewController {
         window.rootViewController = splashVC
     }
     
+    // MARK: - Avatar
+    
     private func updateAvatar() {
         guard
             let profileImageUrl = ProfileImageService.shared.avatarURL,
@@ -218,10 +223,65 @@ final class ProfileViewController: UIViewController {
         avatarImageView.kf.setImage(with: url)
     }
     
-    private func setupViews() {
-        [avatarImageView, nameLabel, loginNameLabel, logoutButton, descriptionLabel, activityIndicator].forEach {
-            view.addSubview($0)
+    private func loadAvatarImage() {
+        guard let profile = profileService.profile,
+              let profileImage = profile.profileImage,
+              let url = URL(string: profileImage.large) else {
+            setPlaceholderImage()
+            return
         }
+        
+        avatarImageView.kf.setImage(
+            with: url,
+            placeholder: createPlaceholderImage(),
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(0.5))
+            ]
+        ) { [weak self] result in
+            switch result {
+            case .success(let value):
+                print("✅ Аватар загружен успешно. Размер: \(value.image.size)")
+            case .failure(let error):
+                print("❌ Ошибка загрузки: \(error)")
+                self?.setPlaceholderImage()
+            }
+        }
+    }
+    
+    private func createPlaceholderImage() -> UIImage? {
+        let config = UIImage.SymbolConfiguration(pointSize: 35, weight: .regular, scale: .large)
+        return UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.ypGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(config)
+    }
+    
+    private func setPlaceholderImage() {
+        avatarImageView.image = createPlaceholderImage()
+        avatarImageView.contentMode = .center
+    }
+    
+    // MARK: - Profile Info
+    
+    private func updateProfileDetails() {
+        guard let profile = profileService.profile else { return }
+        
+        nameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
+        loginNameLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio ?? "Нет описания"
+    }
+    
+    // MARK: - Layout
+    
+    private func setupViews() {
+        [
+            avatarImageView, avatarGradientView,
+            nameLabel, nameGradientView,
+            loginNameLabel, loginGradientView,
+            descriptionLabel, descriptionGradientView,
+            logoutButton, activityIndicator
+        ].forEach { view.addSubview($0) }
     }
     
     private func setupConstraints() {
@@ -231,15 +291,40 @@ final class ProfileViewController: UIViewController {
             avatarImageView.widthAnchor.constraint(equalToConstant: 70),
             avatarImageView.heightAnchor.constraint(equalTo: avatarImageView.widthAnchor),
             
+            avatarGradientView.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
+            avatarGradientView.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
+            avatarGradientView.trailingAnchor.constraint(equalTo: avatarImageView.trailingAnchor),
+            avatarGradientView.bottomAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
+            
             nameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 8),
             nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
+            nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            nameLabel.heightAnchor.constraint(equalToConstant: 28),
+            
+            nameGradientView.topAnchor.constraint(equalTo: nameLabel.topAnchor),
+            nameGradientView.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
+            nameGradientView.widthAnchor.constraint(equalToConstant: 200),
+            nameGradientView.heightAnchor.constraint(equalTo: nameLabel.heightAnchor),
             
             loginNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
             loginNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
+            loginNameLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            loginNameLabel.heightAnchor.constraint(equalToConstant: 18),
+            
+            loginGradientView.topAnchor.constraint(equalTo: loginNameLabel.topAnchor),
+            loginGradientView.leadingAnchor.constraint(equalTo: loginNameLabel.leadingAnchor),
+            loginGradientView.widthAnchor.constraint(equalToConstant: 150),
+            loginGradientView.heightAnchor.constraint(equalTo: loginNameLabel.heightAnchor),
             
             descriptionLabel.topAnchor.constraint(equalTo: loginNameLabel.bottomAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            descriptionLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 36),
+            
+            descriptionGradientView.topAnchor.constraint(equalTo: descriptionLabel.topAnchor),
+            descriptionGradientView.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),
+            descriptionGradientView.widthAnchor.constraint(equalToConstant: 250),
+            descriptionGradientView.heightAnchor.constraint(equalToConstant: 36),
             
             logoutButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
@@ -247,69 +332,5 @@ final class ProfileViewController: UIViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-    }
-    
-    private func loadAvatarImage() {
-        guard let profile = profileService.profile,
-              let profileImage = profile.profileImage else {
-            setPlaceholderImage()
-            return
-        }
-        guard let url = URL(string: profileImage.large) else {
-            setPlaceholderImage()
-            return
-        }
-        
-        avatarImageView.kf.indicatorType = .activity
-        
-        avatarImageView.kf.setImage(
-            with: url,
-            placeholder: createPlaceholderImage(),
-            options: [
-                .processor(processor),
-                .scaleFactor(UIScreen.main.scale),
-                .cacheOriginalImage,
-                .transition(.fade(0.3))
-            ]) { [weak self] result in
-                switch result {
-                case .success(let value):
-                    print("✅ Аватар загружен успешно")
-                    print("Изображение: \(value.image)")
-                    print("Тип кэша: \(value.cacheType)")
-                    print("Источник: \(value.source)")
-                case .failure(let error):
-                    print("❌ Ошибка загрузки: \(error)")
-                    self?.setPlaceholderImage()
-                }
-            }
-    }
-    
-    private func createPlaceholderImage() -> UIImage? {
-        let config = UIImage.SymbolConfiguration(pointSize: 35, weight: .regular, scale: .large)
-        return UIImage(systemName: "person.circle.fill")?
-            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
-            .withConfiguration(config)
-    }
-    
-    private func setPlaceholderImage() {
-        avatarImageView.image = createPlaceholderImage()
-        avatarImageView.contentMode = .center
-    }
-    
-    private func updateProfileDetails() {
-        guard let profile = profileService.profile else {
-            activityIndicator.startAnimating()
-            return
-        }
-        
-        activityIndicator.stopAnimating()
-        
-        nameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
-        loginNameLabel.text = profile.loginName
-        descriptionLabel.text = profile.bio ?? "Нет описания"
-        
-        if let profileImage = profile.profileImage {
-            print("\(profileImage)")
-        }
     }
 }
