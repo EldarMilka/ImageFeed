@@ -52,7 +52,7 @@ struct UrlsResult: Codable {
     }
 }
 
-<<<<<<< HEAD
+
 struct Photo {
     let id: String
     let size: CGSize
@@ -62,17 +62,8 @@ struct Photo {
     let largeImageURL: String
     let fullImageUrl: String
     var isLiked: Bool
-=======
-public struct Photo {
-    public let id: String
-    public let size: CGSize
-    public let createdAt: Date?
-    public let welcomeDescription: String?
-    public let thumbImageURL: String
-    public let largeImageURL: String
-    public let isLiked: Bool
->>>>>>> origin/main
-    
+}
+
     //    private enum CodingKeys: String, CodingKey {
     //        case id
     //        case createdAt = "created_at"
@@ -81,4 +72,4 @@ public struct Photo {
     //        case largeImageURL = "urls.regular"
     //        case isLiked = "likes"
     //    }
-}
+
