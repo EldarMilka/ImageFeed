@@ -5,11 +5,13 @@
 //  Created by Эльдар Милкаманавичюс on 06.09.2025.
 //
 import Foundation
+import CoreGraphics
 
-final class ImagesListService {
-    private(set) var photos: [Photo] = []
+public final class ImagesListService {
+    public  private(set) var photos: [Photo] = []
     private var lastLoadedPage: Int?
     private var perPage: Int = 10
+<<<<<<< HEAD
     private var currentTask: URLSessionTask?
     private let urlSession = URLSession.shared
     private let oauth2TokenStorage = OAuth2TokenStorage.shared
@@ -39,8 +41,27 @@ final class ImagesListService {
         }
         
         print("🟡 ImagesListService: Используем OAuth токен - \(token.prefix(10))...")
+=======
+    private var isLoading: Bool = false
+    private var networkService: NetworkServiceProtocol
+    //    private var currentTask: URLSessionTask?
+    //    private let urlSession = URLSession.shared
+    public static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
+    // public  static let shared = ImagesListService(); private init(){}
+    
+    public init(networkService: NetworkServiceProtocol = NetworkService()) {
+        self.networkService = networkService
+    }
+    public  func fetchPhotosNextPage() {
+        print("🟡 Начинаем загрузку страницы...")
+        //если идет закачка то прерываем
+        guard !isLoading else { print("🔴 Уже идет загрузка, прерываем")
+            return }
+        isLoading = true
+>>>>>>> origin/main
         
         let nextPage = (lastLoadedPage ?? 0) + 1
+<<<<<<< HEAD
         print("🟡 ImagesListService: Загружаем страницу \(nextPage)")
         
         guard let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=\(perPage)") else {
@@ -54,9 +75,23 @@ final class ImagesListService {
         
         print("🟡 ImagesListService: URL - \(url)")
         print("🟡 ImagesListService: Используем токен пользователя")
+=======
+        print("🟡 Загружаем страницу: \(nextPage)")
         
-        currentTask = urlSession.dataTask(with: request) { [weak self] data, response, error in
+>>>>>>> origin/main
+        
+        // guard let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=\(perPage)") else
+        // guard let url = URL(string: "https://jsonplaceholder.typicode.com/photos?_page=1&_limit=1") else
+        guard let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=\(perPage)") else {
+            isLoading = false
+            print("🔴 Неверный URL")
+            return
+        }
+        print("🟡 URL: \(url)")
+        
+        networkService.fetchData(from: url) { [weak self] result in
             guard let self = self else { return }
+<<<<<<< HEAD
             
             defer {
                 self.currentTask = nil
@@ -121,6 +156,31 @@ final class ImagesListService {
         }
         currentTask?.resume()
         print("🟡 ImagesListService: Задача ЗАПУЩЕНА")
+=======
+            self.isLoading = false
+            switch result {
+            case .success(let data ):
+                do {
+                    let photosResults = try JSONDecoder().decode([PhotoResult].self, from: data)
+                    let newPhotos = photosResults.map { self.convert(photoResult: $0)}
+                    
+                    DispatchQueue.main.async {
+                        self.lastLoadedPage = nextPage
+                        self.photos.append(contentsOf: newPhotos) // Новые фото добавляются в конец массива
+                        
+                        NotificationCenter.default.post(
+                            name: ImagesListService.didChangeNotification,
+                            object: self)
+                    }
+                    
+                } catch {
+                    print("Ошибка декодирования  \(error)")
+                }
+            case .failure(let error):
+                print("🔴 Ошибка: \(error)")
+            }
+        }
+>>>>>>> origin/main
     }
     
     
@@ -203,10 +263,42 @@ final class ImagesListService {
         )
     }
     
+<<<<<<< HEAD
     func clean() {
+=======
+    // Дополнительные методы для очистки (опционально)
+   public func clean() {
+>>>>>>> origin/main
         photos = []
         lastLoadedPage = nil
-        currentTask?.cancel()
-        currentTask = nil
+       isLoading = false
     }
 }
+        
+
+
+
+
+
+
+    //        var request = URLRequest(url: url)
+    //        request.setValue("Bearer \(Constants.AccessKey)", forHTTPHeaderField: "Authorization")
+    //
+    //        currentTask = urlSession.dataTask(with: request) { [weak self] data, response, error in
+    //            guard let self = self else { return }
+    //
+    //            defer { self.currentTask = nil }
+    //
+    //            if let error = error {
+    //                print("ошибка загрузки \(error)")
+    //                return
+    //        }
+    //            guard let data = data else {
+    //                print( "Нет данных")
+    //                return
+    //            }
+    //
+    //            do {
+    //                let photosResults = try JSONDecoder().decode([PhotoResult].self, from: data)
+    //                let newPhotos = photosResults.map { self.convert(photoResult: $0)}
+    //
