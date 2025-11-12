@@ -36,13 +36,49 @@ final class SplashViewController: UIViewController {
     }
     
     private func switchToTabBarController() {
-        guard let window = UIApplication.shared.windows.first else {
-            fatalError("Invalid Configuration")
+            guard let window = UIApplication.shared.windows.first else {
+                fatalError("Invalid Configuration")
+            }
+            let tabBarController = UIStoryboard(name: "Main", bundle: .main)
+                .instantiateViewController(withIdentifier: "TabBarViewController")
+            
+            print("🔍 SplashViewController: Начинаем поиск контроллеров...")
+            
+            // НАСТРАИВАЕМ ПРЕЗЕНТЕР ДЛЯ ВСЕХ КОНТРОЛЛЕРОВ
+            if let tabBar = tabBarController as? UITabBarController,
+               let viewControllers = tabBar.viewControllers {
+                
+                print("🔍 SplashViewController: Найдено контроллеров в TabBar: \(viewControllers.count)")
+                
+                for (index, controller) in viewControllers.enumerated() {
+                    print("🔍 SplashViewController: Контроллер \(index): \(type(of: controller))")
+                    
+                    // НАСТРОЙКА IMAGESLISTVIEWCONTROLLER
+                    if let imagesListVC = controller as? ImagesListViewController {
+                        print("✅ SplashViewController: НАЙДЕН ImagesListViewController! Настраиваем презентер...")
+                        let imagesListPresenter = ImagesListPresenter()
+                        imagesListVC.presenter = imagesListPresenter
+                        imagesListPresenter.view = imagesListVC
+                        print("🔗 SplashViewController: Презентер установлен: \(imagesListVC.presenter != nil)")
+                        print("🔗 SplashViewController: View установлен: \(imagesListPresenter.view != nil)")
+                        
+                        // ВЫЗЫВАЕМ ИНИЦИАЛИЗАЦИЮ ПОСЛЕ НАСТРОЙКИ ПРЕЗЕНТЕРА
+                            imagesListVC.initializeAfterPresenterSetup()
+                    }
+                    
+                    // НАСТРОЙКА PROFILEVIEWCONTROLLER
+                    if let profileVC = controller as? ProfileViewController {
+                        print("✅ SplashViewController: НАЙДЕН ProfileViewController! Настраиваем презентер...")
+                        let profilePresenter = ProfilePresenter()
+                        profileVC.presenter = profilePresenter
+                        profilePresenter.view = profileVC
+                    }
+                }
+            }
+            
+            print("🚀 SplashViewController: Переключаем rootViewController на TabBarController")
+            window.rootViewController = tabBarController
         }
-        let tabBarController = UIStoryboard(name: "Main", bundle: .main)
-            .instantiateViewController(withIdentifier: "TabBarViewController")
-        window.rootViewController = tabBarController
-    }
     
     private func fetchProfile(token: String) {
         UIBlockingProgressHUD.show()
@@ -160,5 +196,3 @@ extension SplashViewController: AuthViewControllerDelegate {
         }
     }
 }
-
-

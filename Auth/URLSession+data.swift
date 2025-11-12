@@ -11,6 +11,7 @@ enum NetworkError: Error {  // 1
     case httpStatusCode(Int)
     case urlRequestError(Error)
     case urlSessionError
+    case noData
 }
 
 extension URLSession {

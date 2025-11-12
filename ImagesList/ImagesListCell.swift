@@ -24,16 +24,22 @@ final class ImagesListCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        LikeButtom.accessibilityIdentifier = "likeButton"
     }
     
     func configure(with photo: Photo) {
         self.photoId = photo.id
+        let likeButtonIdentifier = photo.isLiked ? "like button on" : "like button off"
+        LikeButtom.accessibilityIdentifier = likeButtonIdentifier
         setIsLiked(photo.isLiked)
     }
     
     func setIsLiked(_ isLiked: Bool) {
         let likeImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
         LikeButtom.setImage(likeImage, for: .normal)
+        
+        let likeButtonIdentifier = isLiked ? "like button on" : "like button off"
+                LikeButtom.accessibilityIdentifier = likeButtonIdentifier
     }
     
     @IBAction private func likeButtonClicked(_ sender: UIButton) {
@@ -52,5 +58,7 @@ final class ImagesListCell: UITableViewCell {
         delegate = nil
         cellImage.kf.cancelDownloadTask()
         cellImage.image = UIImage(named: "load")
+        
+        LikeButtom.accessibilityIdentifier = "likeButton"
     }
 }
