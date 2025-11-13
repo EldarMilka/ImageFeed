@@ -26,6 +26,7 @@ final class SingleImageViewController: UIViewController {
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         
+        imageView.accessibilityIdentifier = "full image view"
         
         if let image {
             

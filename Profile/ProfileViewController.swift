@@ -8,7 +8,10 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+
+final class ProfileViewController: UIViewController & ProfileViewControllerProtocol {
+    var presenter: ProfilePresenterProtocol?
+    
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -107,7 +110,11 @@ final class ProfileViewController: UIViewController {
         setupViews()
         setupConstraints()
         
-        showGradientSkeleton()
+        //для тестов
+        nameLabel.accessibilityIdentifier = "Name Lastname"
+           loginNameLabel.accessibilityIdentifier = "@eldar2476"
+           logoutButton.accessibilityIdentifier = "logout button"
+           
         
         profileImageServiceObserver = NotificationCenter.default.addObserver(
             forName: ProfileImageService.didChangeNotification,
@@ -117,10 +124,14 @@ final class ProfileViewController: UIViewController {
             self?.updateAvatar()
         }
         
-        setupProfileNotifications()
+        presenter?.viewDidLoad()
+        
         logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
         
-        loadProfileData()
+      
+    }
+   @objc private func didTapLogoutButton() {
+       presenter?.didTapLogout()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -183,34 +194,7 @@ final class ProfileViewController: UIViewController {
             self?.updateProfileDetails()
         }
     }
-    
-    // MARK: - Logout
-    
-    @objc private func didTapLogoutButton() {
-        let alert = UIAlertController(
-            title: "Пока, пока!",
-            message: "Выйти из аккаунта?",
-            preferredStyle: .alert
-        )
-        
-        alert.addAction(UIAlertAction(title: "ДА", style: .default) { [weak self] _ in
-            ProfileLogoutService.shared.logout()
-            self?.switchToSplashScreen()
-        })
-        
-        alert.addAction(UIAlertAction(title: "НЕТ", style: .cancel))
-        present(alert, animated: true)
-    }
-    
-    private func switchToSplashScreen() {
-        guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("Invalid window configuration")
-            return
-        }
-        
-        let splashVC = SplashViewController()
-        window.rootViewController = splashVC
-    }
+
     
     // MARK: - Avatar
     
@@ -282,6 +266,8 @@ final class ProfileViewController: UIViewController {
             descriptionLabel, descriptionGradientView,
             logoutButton, activityIndicator
         ].forEach { view.addSubview($0) }
+        
+        
     }
     
     private func setupConstraints() {
@@ -332,5 +318,56 @@ final class ProfileViewController: UIViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+    }
+    // MARK: - ProfileViewControllerProtocol
+
+    func updateProfile(name: String, loginName: String, bio: String?) {
+        nameLabel.text = name
+        loginNameLabel.text = loginName
+        descriptionLabel.text = bio
+    }
+
+    func updateAvatar(imageURL: URL?) {
+        guard let url = imageURL else {
+            setPlaceholderImage()
+            return
+        }
+        
+        avatarImageView.kf.setImage(with: url) { [weak self] result in
+            if case .failure = result {
+                self?.setPlaceholderImage()
+            }
+        }
+    }
+
+    func showLoading() {
+        showGradientSkeleton()
+    }
+
+    func hideLoading() {
+        hideGradientSkeleton()
+    }
+
+    func showLogoutConfirmation() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Выйти из аккаунта?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "ДА", style: .default) { [weak self] _ in
+            self?.presenter?.performLogout()
+        })
+        
+        alert.addAction(UIAlertAction(title: "НЕТ", style: .cancel))
+        present(alert, animated: true)
+    }
+
+    func switchToSplashScreen() {
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("Invalid window configuration")
+            return
+        }
+        window.rootViewController = SplashViewController()
     }
 }
